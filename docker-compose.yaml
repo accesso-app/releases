@@ -35,6 +35,8 @@ services:
     restart: always
     expose:
       - "9000"
+    ports:
+      - 9000:9000
     depends_on:
       - database
     networks:
@@ -47,6 +49,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       DATABASE_HOST: database
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
+      LISTEN_PORT: "9000"
 
   frontend:
     container_name: authmenow-frontend
@@ -55,19 +58,17 @@ services:
       entry:
         aliases:
           - auth.local
-    expose:
-      - "80"
+    ports:
+      - 3000:3000
     volumes:
       - "${PWD}/tls/authmenow.crt:/var/lib/authmenow/tls/authmenow.crt"
       - "${PWD}/tls/authmenow.pem:/var/lib/authmenow/tls/authmenow.pem"
       - "${PWD}/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem"
       - image-storage:/images
     environment:
-      RUST_LOG: info
       PUBLIC_URL: https://auth.local
       IMAGE_URL: https://auth.local/images
       BACKEND_URL: http://public-api:9000
-      LISTEN_HOST: 0.0.0.0:4000
       
 
   # admin:

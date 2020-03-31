@@ -35,7 +35,7 @@ services:
     volumes:
       - /etc/letsencrypt/live/auth-dev.atomix.team/fullchain.pem:/var/lib/authmenow/tls/authmenow.crt
       - /etc/letsencrypt/live/auth-dev.atomix.team/privkey.pem:/var/lib/authmenow/tls/authmenow.pem
-      - /usr/local/var/howtocards/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem
+      - /usr/local/var/authmenow/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem
 
   # admin:
   #   image: docker.pkg.github.com/authmenow/admin/admin:dev

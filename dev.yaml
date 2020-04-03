@@ -24,10 +24,10 @@ services:
       - /usr/local/var/authmenow/postgres:/var/lib/postgresql/data
 
   public-api:
-    image: docker.pkg.github.com/authmenow/backend/public-api:latest
+    image: "docker.pkg.github.com/authmenow/backend/public-api:0"
 
   frontend:
-    image: docker.pkg.github.com/authmenow/frontend/frontend:latest
+    image: "docker.pkg.github.com/authmenow/frontend/frontend:0"
     networks:
       entry:
         aliases:

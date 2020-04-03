@@ -27,7 +27,7 @@ services:
     image: "docker.pkg.github.com/authmenow/backend/public-api:0"
 
   frontend:
-    image: "docker.pkg.github.com/authmenow/frontend/frontend:0"
+    image: "docker.pkg.github.com/authmenow/frontend/main:0"
     networks:
       entry:
         aliases:

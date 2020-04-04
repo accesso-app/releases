@@ -23,6 +23,7 @@ jobs:
           registry: docker.pkg.github.com
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+          dockerfile: facade/Dockerfile
           tag_semver: skip
           tag_separator: "@"
           semver_higher: true

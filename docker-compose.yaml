@@ -54,23 +54,35 @@ services:
   frontend:
     container_name: authmenow-frontend
     image: docker.pkg.github.com/authmenow/frontend/main:latest
-    networks:
-      entry:
-        aliases:
-          - auth.local
     ports:
       - 3000:3000
-    volumes:
-      - "${PWD}/tls/authmenow.crt:/var/lib/authmenow/tls/authmenow.crt"
-      - "${PWD}/tls/authmenow.pem:/var/lib/authmenow/tls/authmenow.pem"
-      - "${PWD}/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem"
-      - image-storage:/images
+    networks:
+      - entry
     environment:
       PUBLIC_URL: https://auth.local
       IMAGE_URL: https://auth.local/images
       BACKEND_URL: http://public-api:9000
-      
 
+  facade:
+    container_name: authmenow-facade
+    image: authmenow/releases/facade:latest
+    ports:
+      - 443:443
+      - 80:80
+    depends_on:
+      - frontend
+    networks:
+      entry:
+        aliases:
+          - auth.local
+    volumes:
+      - "${PWD}/tls/authmenow.crt:/var/lib/authmenow/tls/authmenow.crt"
+      - "${PWD}/tls/authmenow.pem:/var/lib/authmenow/tls/authmenow.pem"
+      - "${PWD}/tls/dhparam.pem:/etc/nginx/ssl/dhparam.pem"
+      - image-storage:/images
+    environment:
+      SERVER_NAME: auth.local
+      MAIN_UPSTREAM: authmenow-frontend:3000
   # admin:
   #   container_name: authmenow-admin
   #   image: docker.pkg.github.com/authmenow/admin/admin:latest

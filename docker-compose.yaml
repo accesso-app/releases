@@ -65,7 +65,7 @@ services:
 
   facade:
     container_name: authmenow-facade
-    image: authmenow/releases/facade:latest
+    image: docker.pkg.github.com/authmenow/frontend/main:latest
     ports:
       - 443:443
       - 80:80

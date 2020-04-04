@@ -28,6 +28,12 @@ services:
 
   frontend:
     image: "docker.pkg.github.com/authmenow/frontend/main:0"
+    environment:
+      PUBLIC_URL: https://auth-dev.atomix.team
+      IMAGE_URL: https://auth-dev.atomix.team/images
+
+  facade:
+    image: "docker.pkg.github.com/authmenow/releases/facade:0"
     networks:
       entry:
         aliases:
@@ -36,6 +42,8 @@ services:
       - /etc/letsencrypt/live/auth-dev.atomix.team/fullchain.pem:/var/lib/authmenow/tls/authmenow.crt
       - /etc/letsencrypt/live/auth-dev.atomix.team/privkey.pem:/var/lib/authmenow/tls/authmenow.pem
       - /usr/local/var/authmenow/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem
-
+      - image-storage:/images
+    environment:
+      SERVER_NAME: auth-dev.atomix.team
   # admin:
   #   image: docker.pkg.github.com/authmenow/admin/admin:dev

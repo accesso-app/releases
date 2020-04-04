@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - "facade/*"
+      - ".github/workflows/facade-docker.yml"
     branches:
       - master
     tags:

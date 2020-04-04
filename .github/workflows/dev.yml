@@ -2,6 +2,8 @@ name: Dev CI
 
 on:
   push:
+    branches:
+      - master
     paths:
       - "docker-compose.yaml"
       - "dev.yaml"

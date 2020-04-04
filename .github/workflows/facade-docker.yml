@@ -1,0 +1,28 @@
+name: Facade Docker
+
+on:
+  push:
+    paths:
+      - "facade/*"
+    branches:
+      - master
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Publish Docker Image
+        uses: sergeysova/docker-publish-action@v1
+        with:
+          image: authmenow/releases/facade
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          tag_semver: skip
+          tag_separator: "@"
+          semver_higher: true

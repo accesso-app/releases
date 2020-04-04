@@ -39,9 +39,9 @@ services:
         aliases:
           - auth-dev.atomix.team
     volumes:
-      - /etc/letsencrypt/live/auth-dev.atomix.team/fullchain.pem:/var/lib/authmenow/tls/authmenow.crt
-      - /etc/letsencrypt/live/auth-dev.atomix.team/privkey.pem:/var/lib/authmenow/tls/authmenow.pem
-      - /usr/local/var/authmenow/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem
+      - /etc/letsencrypt/live/auth-dev.atomix.team/fullchain.pem:/var/lib/authmenow/tls/authmenow.crt:ro
+      - /etc/letsencrypt/live/auth-dev.atomix.team/privkey.pem:/var/lib/authmenow/tls/authmenow.pem:ro
+      - /usr/local/var/authmenow/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem:ro
       - image-storage:/images
     environment:
       SERVER_NAME: auth-dev.atomix.team

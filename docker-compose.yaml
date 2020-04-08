@@ -69,7 +69,7 @@ services:
       - 80:80
     depends_on:
       - frontend
-      - backend
+      - public-api
     networks:
       entry:
         aliases:
@@ -82,7 +82,7 @@ services:
     environment:
       SERVER_NAME: auth.local
       MAIN_UPSTREAM: authmenow-frontend:3000
-      BACKEND_UPSTREAM: authmenow-backend:9000
+      BACKEND_UPSTREAM: authmenow-public-api:9000
   # admin:
   #   container_name: authmenow-admin
   #   image: docker.pkg.github.com/authmenow/admin/admin:latest

@@ -35,8 +35,6 @@ services:
     restart: always
     expose:
       - "9000"
-    ports:
-      - 9000:9000
     depends_on:
       - database
     networks:
@@ -54,8 +52,8 @@ services:
   frontend:
     container_name: authmenow-frontend
     image: docker.pkg.github.com/authmenow/frontend/main:latest
-    ports:
-      - 3000:3000
+    expose:
+      - "3000"
     networks:
       - entry
     environment:
@@ -83,6 +81,7 @@ services:
     environment:
       SERVER_NAME: auth.local
       MAIN_UPSTREAM: authmenow-frontend:3000
+      BACKEND_UPSTREAM: authmenow-backend:9000
   # admin:
   #   container_name: authmenow-admin
   #   image: docker.pkg.github.com/authmenow/admin/admin:latest

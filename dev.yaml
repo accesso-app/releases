@@ -8,7 +8,7 @@ version: "3.7"
 # mkdir -p /usr/local/var/authmenow/tls
 # openssl dhparam -out /usr/local/var/authmenow/tls/dhparam.pem 2048
 
-## Latest manual deploy: 2020-04-08T08:22:12.257Z
+## Latest manual deploy: 2020-04-10T12:15:56.960Z
 
 volumes:
   image-storage:

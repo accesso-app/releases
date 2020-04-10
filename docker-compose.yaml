@@ -7,6 +7,7 @@ volumes:
       type: none
       device: "${PWD}/data/images"
       o: bind
+
   postgres-storage:
     driver: local
     driver_opts:
@@ -38,9 +39,7 @@ services:
     image: docker.pkg.github.com/authmenow/backend/public-api:latest
     restart: always
     expose:
-      - "9000"
-    ports:
-      - 9000:9000
+      - "9009"
     depends_on:
       - database
     networks:
@@ -53,7 +52,8 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       DATABASE_HOST: database
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
-      LISTEN_PORT: "9000"
+      LISTEN_PORT: "9009"
+      LISTEN_HOST: "0.0.0.0"
 
   frontend:
     container_name: authmenow-frontend
@@ -65,7 +65,7 @@ services:
     environment:
       PUBLIC_URL: https://auth.local
       IMAGE_URL: https://auth.local/images
-      BACKEND_URL: http://public-api:9000
+      BACKEND_URL: http://authmenow-public-api:9009
 
   facade:
     container_name: authmenow-facade
@@ -88,7 +88,7 @@ services:
     environment:
       SERVER_NAME: auth.local
       MAIN_UPSTREAM: authmenow-frontend:3000
-      BACKEND_UPSTREAM: authmenow-public-api:9000
+      BACKEND_UPSTREAM: authmenow-public-api:9009
   # admin:
   #   container_name: authmenow-admin
   #   image: docker.pkg.github.com/authmenow/admin/admin:latest

@@ -17,8 +17,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Info ${{ github.event.client_payload.github.repository }}
+      - name: Dispatcher ${{ github.event.client_payload.github.repository }}
         if: github.event.client_payload
+        run: echo Dispatcher ${{ github.event.client_payload.github.repository }}
       - name: SSH
         uses: appleboy/ssh-action@v0.0.7
         env:

@@ -5,7 +5,13 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: "${PWD}/images"
+      device: "${PWD}/data/images"
+      o: bind
+  postgres-storage:
+    driver: local
+    driver_opts:
+      type: none
+      device: "${PWD}/data/postgres"
       o: bind
 
 networks:
@@ -17,7 +23,7 @@ services:
     image: postgres:11.5
     restart: always
     volumes:
-      - "${PWD}/postgres:/var/lib/postgresql/data"
+      - "postgres-storage:/var/lib/postgresql/data"
     networks:
       - entry
     environment:
@@ -26,8 +32,6 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     expose:
       - "5432"
-    ports:
-      - 5432:5432
 
   public-api:
     container_name: authmenow-public-api
@@ -35,6 +39,8 @@ services:
     restart: always
     expose:
       - "9000"
+    ports:
+      - 9000:9000
     depends_on:
       - database
     networks:
@@ -63,7 +69,7 @@ services:
 
   facade:
     container_name: authmenow-facade
-    image: docker.pkg.github.com/authmenow/frontend/main:latest
+    image: docker.pkg.github.com/authmenow/releases/facade:latest
     ports:
       - 443:443
       - 80:80

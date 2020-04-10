@@ -14,6 +14,7 @@ on:
 
 jobs:
   deploy:
+    name: Deploy ${{ github.event.client_payload.github.repository }}
     runs-on: ubuntu-latest
 
     steps:

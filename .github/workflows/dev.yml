@@ -63,7 +63,7 @@ jobs:
         if: success()
         with:
           token: '${{ github.token }}'
-          target_url: https://auth-dev.atomix.team
+          environment_url: https://auth-dev.atomix.team
           state: success
           environment: development
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
@@ -73,7 +73,6 @@ jobs:
         if: failure()
         with:
           token: '${{ github.token }}'
-          target_url: https://auth-dev.atomix.team
           state: failure
           environment: development
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}

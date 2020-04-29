@@ -28,6 +28,14 @@ jobs:
           token: '${{ github.token }}'
           target_url: https://auth-dev.atomix.team
           environment: development
+      - uses: chrnorm/deployment-status@releases/v1
+        name: Deployment success
+        if: success()
+        with:
+          token: '${{ github.token }}'
+          state: in_progress
+          environment: development
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
       - name: SSH
         uses: appleboy/ssh-action@v0.0.7
         env:

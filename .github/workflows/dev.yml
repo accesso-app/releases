@@ -29,13 +29,13 @@ jobs:
         with:
           token: '${{ github.token }}'
           environment: development
-#       - uses: chrnorm/deployment-status@releases/v1
-#         name: Deployment progress
-#         with:
-#           token: '${{ github.token }}'
-#           environment: development
-#           state: in_progress
-#           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+      - uses: sergeysova/deployment-status@master
+        name: Deployment progress
+        with:
+          token: '${{ github.token }}'
+          environment: development
+          state: in_progress
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
       - name: SSH
         uses: appleboy/ssh-action@v0.0.7
         env:

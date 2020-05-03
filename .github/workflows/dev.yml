@@ -11,6 +11,8 @@ on:
   repository_dispatch:
     types:
       - deploy-dev
+  project_card:
+    types: [created]
 
 jobs:
   deploy:

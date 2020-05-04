@@ -54,7 +54,7 @@ jobs:
           port: ${{ secrets.DEV_PORT }}
           key: ${{ secrets.DEV_SSH_PRIVATE }}
           passphrase: ${{ secrets.DEV_SSH_PASSPHRASE }}
-          envs: DB_NAME,DB_USER,DB_PASS,RELEASE_SHA,GITHUB_TOKEN,DOCKER_USERNAME
+          envs: DB_NAME,DB_USER,DB_PASS,SENDGRID_API_KEY,RELEASE_SHA,GITHUB_TOKEN,DOCKER_USERNAME
           script_stop: true
           script: |
             cd releases

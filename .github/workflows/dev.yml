@@ -23,6 +23,7 @@ jobs:
       - name: Dispatcher ${{ github.event.client_payload.github.repository }}
         if: github.event.client_payload
         run: echo Dispatcher ${{ github.event.client_payload.github.repository }}
+
       - uses: chrnorm/deployment-action@releases/v1
         name: Create GitHub Deployment
         id: deployment
@@ -36,12 +37,14 @@ jobs:
           environment: development
           state: in_progress
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
       - name: SSH
         uses: appleboy/ssh-action@v0.0.7
         env:
           DB_NAME: ${{ secrets.DEV_DB }}
           DB_USER: ${{ secrets.DEV_DB_USER }}
           DB_PASS: ${{ secrets.DEV_DB_PASSWORD }}
+          SENDGRID_API_KEY: ${{ secrets.DEV_SENDGRID_API_KEY }}
           RELEASE_SHA: ${{ github.sha }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DOCKER_USERNAME: ${{ secrets.DEV_DOCKER_USERNAME }}

@@ -25,6 +25,9 @@ services:
 
   public-api:
     image: "docker.pkg.github.com/authmenow/backend/public-api:latest"
+    environment:
+      SG_APPLICATION_HOST: auth-dev.atomix.team
+      SG_SENDER_EMAIL: no-reply@auth-dev.atomix.team
 
   frontend:
     image: "docker.pkg.github.com/authmenow/frontend/main:latest"

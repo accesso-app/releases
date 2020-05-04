@@ -54,6 +54,9 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
       LISTEN_PORT: "9009"
       LISTEN_HOST: "0.0.0.0"
+      SG_API_KEY: ${SENDGRID_API_KEY}
+      SG_EMAIL_CONFIRM_URL_PREFIX: /register/confirm-
+      SG_EMAIL_CONFIRM_TEMPLATE: d-eec45c55c0364140bf38172e021c8ea5
 
   frontend:
     container_name: authmenow-frontend

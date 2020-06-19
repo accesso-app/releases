@@ -20,7 +20,7 @@ networks:
 
 services:
   database:
-    container_name: authmenow-database
+    container_name: accesso-database
     image: postgres:11.5
     restart: always
     volumes:
@@ -35,8 +35,8 @@ services:
       - "5432"
 
   public-api:
-    container_name: authmenow-public-api
-    image: docker.pkg.github.com/authmenow/backend/public-api:latest
+    container_name: accesso-public-api
+    image: docker.pkg.github.com/accesso-app/backend/public-api:latest
     restart: always
     expose:
       - "9009"
@@ -61,8 +61,8 @@ services:
       SG_SENDER_EMAIL: no-reply@auth-dev.atomix.team
 
   frontend:
-    container_name: authmenow-frontend
-    image: docker.pkg.github.com/authmenow/frontend/main:latest
+    container_name: accesso-frontend
+    image: docker.pkg.github.com/accesso-app/frontend/main:latest
     expose:
       - "3000"
     networks:
@@ -70,11 +70,11 @@ services:
     environment:
       PUBLIC_URL: https://auth.local
       IMAGE_URL: https://auth.local/images
-      BACKEND_URL: http://authmenow-public-api:9009
+      BACKEND_URL: http://accesso-public-api:9009
 
   facade:
-    container_name: authmenow-facade
-    image: docker.pkg.github.com/authmenow/releases/facade:latest
+    container_name: accesso-facade
+    image: docker.pkg.github.com/accesso-app/releases/facade:latest
     ports:
       - 443:443
       - 80:80
@@ -86,17 +86,17 @@ services:
         aliases:
           - auth.local
     volumes:
-      - "${PWD}/tls/authmenow.crt:/var/lib/authmenow/tls/authmenow.crt"
-      - "${PWD}/tls/authmenow.pem:/var/lib/authmenow/tls/authmenow.pem"
+      - "${PWD}/tls/accesso.crt:/var/lib/accesso/tls/accesso.crt"
+      - "${PWD}/tls/accesso.pem:/var/lib/accesso/tls/accesso.pem"
       - "${PWD}/tls/dhparam.pem:/etc/nginx/ssl/dhparam.pem"
       - image-storage:/images
     environment:
       SERVER_NAME: auth.local
-      MAIN_UPSTREAM: authmenow-frontend:3000
-      BACKEND_UPSTREAM: authmenow-public-api:9009
+      MAIN_UPSTREAM: accesso-frontend:3000
+      BACKEND_UPSTREAM: accesso-public-api:9009
   # admin:
-  #   container_name: authmenow-admin
-  #   image: docker.pkg.github.com/authmenow/admin/admin:latest
+  #   container_name: accesso-admin
+  #   image: docker.pkg.github.com/accesso-app/admin/admin:latest
   #   networks:
   #     - entry
   #   expose: # ???

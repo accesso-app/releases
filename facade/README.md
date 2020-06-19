@@ -8,6 +8,6 @@
 
 #### Volumes
 
-- `/var/lib/authmenow/tls/authmenow.crt`
-- `/var/lib/authmenow/tls/authmenow.pem`
+- `/var/lib/accesso/tls/accesso.crt`
+- `/var/lib/accesso/tls/accesso.pem`
 - `/etc/ssl/certs/dhparam.pem`

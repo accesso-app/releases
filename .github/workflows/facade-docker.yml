@@ -20,7 +20,7 @@ jobs:
       - name: Publish Docker Image
         uses: sergeysova/docker-publish-action@v1
         with:
-          image: authmenow/releases/facade
+          image: accesso-app/releases/facade
           registry: docker.pkg.github.com
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}

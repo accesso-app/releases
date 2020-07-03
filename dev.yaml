@@ -8,7 +8,7 @@ version: "3.7"
 # mkdir -p /usr/local/var/accesso/tls
 # openssl dhparam -out /usr/local/var/accesso/tls/dhparam.pem 2048
 
-## Latest manual deploy: 2020-04-10T13:47:49.496Z
+## Latest manual deploy: 2020-07-03T15:55:22.409Z
 
 volumes:
   image-storage:

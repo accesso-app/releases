@@ -1,0 +1,82 @@
+name: PRODUCTION CI
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "prod.yaml"
+      - ".github/workflows/prod.yml"
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: chrnorm/deployment-action@v1.2.0
+        name: Create GitHub Deployment
+        id: deployment
+        with:
+          token: '${{ github.token }}'
+          environment: production
+
+      - uses: chrnorm/deployment-status@v1.0.0
+        name: Deployment progress
+        with:
+          token: '${{ github.token }}'
+          environment: production
+          state: in_progress
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - name: SSH
+        uses: appleboy/ssh-action@v0.0.7
+        env:
+          DB_NAME: ${{ secrets.PROD_DB }}
+          DB_USER: ${{ secrets.PROD_DB_USER }}
+          DB_PASS: ${{ secrets.PROD_DB_PASSWORD }}
+          SENDGRID_API_KEY: ${{ secrets.PROD_SENDGRID_API_KEY }}
+          RELEASE_SHA: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_USERNAME: ${{ github.actor }}
+        with:
+          host: ${{ secrets.PROD_HOSTNAME }}
+          username: ${{ secrets.PROD_USER }}
+          port: ${{ secrets.PROD_PORT }}
+          key: ${{ secrets.PROD_SSH_PRIVATE }}
+          passphrase: ${{ secrets.PROD_SSH_PASSPHRASE }}
+          envs: DB_NAME,DB_USER,DB_PASS,SENDGRID_API_KEY,RELEASE_SHA,GITHUB_TOKEN,DOCKER_USERNAME
+          script_stop: true
+          script: |
+            cd releases
+            git reset --hard HEAD
+            git clean -f
+            git fetch -p
+            git checkout $RELEASE_SHA
+            docker login docker.pkg.github.com --username $DOCKER_USERNAME -p $GITHUB_TOKEN
+            export POSTGRES_DB="$DB_NAME"
+            export POSTGRES_USER="$DB_USER"
+            export POSTGRES_PASSWORD="$DB_PASS"
+            export SENDGRID_API_KEY="$SENDGRID_API_KEY"
+            docker-compose -f docker-compose.yaml -f prod.yaml pull
+            docker-compose -f docker-compose.yaml -f prod.yaml build
+            docker-compose -f docker-compose.yaml -f prod.yaml up -d --remove-orphans
+
+      - uses: sergeysova/deployment-status@releases/v1.1
+        name: Deployment success
+        if: success()
+        with:
+          token: '${{ github.token }}'
+          environment_url: https://${{ secrets.PROD_HOSTNAME }}
+          state: success
+          environment: production
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+      - uses: sergeysova/deployment-status@releases/v1.1
+        name: Deployment failure
+        if: failure()
+        with:
+          token: '${{ github.token }}'
+          state: failure
+          environment: production
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}

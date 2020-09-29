@@ -37,7 +37,7 @@ services:
       IMAGE_URL: https://accesso.app/images
 
   facade:
-    image: "docker.pkg.github.com/accesso-app/releases/facade:0.1.1"
+    image: "docker.pkg.github.com/accesso-app/releases/facade:0.2.0"
     networks:
       entry:
         aliases:

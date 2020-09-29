@@ -1,0 +1,55 @@
+version: "3.7"
+
+# https://accesso.app
+
+# mkdir -p /mnt/volume_nyc1_01/accesso/images
+# mkdir -p /mnt/volume_nyc1_01/accesso/postgres
+##
+## issue certificate with let's encrypt
+# mkdir -p /usr/local/var/accesso/tls
+# openssl dhparam -out /usr/local/var/accesso/tls/dhparam.pem 2048
+
+## Latest manual deploy: 2020-09-06T11:07:06.576Z
+
+volumes:
+  image-storage:
+    driver: local
+    driver_opts:
+      type: none
+      device: "/mnt/volume_nyc1_01/accesso/images"
+      o: bind
+
+services:
+  database:
+    volumes:
+      - /mnt/volume_nyc1_01/accesso/postgres:/var/lib/postgresql/data
+
+  public-api:
+    image: "docker.pkg.github.com/accesso-app/backend/public-api:0.3.0"
+    environment:
+      SG_APPLICATION_HOST: accesso.app
+      SG_SENDER_EMAIL: no-reply@accesso.app
+
+  frontend:
+    image: "docker.pkg.github.com/accesso-app/frontend/main:0.2.1"
+    environment:
+      PUBLIC_URL: https://accesso.app
+      IMAGE_URL: https://accesso.app/images
+
+  facade:
+    image: "docker.pkg.github.com/accesso-app/releases/facade:0.1.1"
+    networks:
+      entry:
+        aliases:
+          - accesso.app
+    volumes:
+      - /etc/letsencrypt/live/accesso.app/fullchain.pem:/var/lib/accesso/tls/accesso.crt:ro
+      - /etc/letsencrypt/live/accesso.app/privkey.pem:/var/lib/accesso/tls/accesso.pem:ro
+      - /usr/local/var/accesso/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem:ro
+      - image-storage:/images
+    environment:
+      SERVER_NAME: accesso.app
+      WEB_EXTRA: ''
+
+  # admin:
+  #   image: docker.pkg.github.com/accesso-app/admin/admin:dev

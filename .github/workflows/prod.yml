@@ -1,12 +1,12 @@
 name: PRODUCTION CI
 
-on:
-  push:
-    branches:
-      - master
-    paths:
-      - "prod.yaml"
-      - ".github/workflows/prod.yml"
+"on":
+  # push:
+  #   branches:
+  #     - master
+  #   paths:
+  #     - "prod.yaml"
+  #     - ".github/workflows/prod.yml"
   workflow_dispatch:
 
 jobs:

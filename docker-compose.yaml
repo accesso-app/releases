@@ -34,6 +34,31 @@ services:
     expose:
       - "5432"
 
+  api-internal:
+    container_name: accesso-api-internal
+    image: docker.pkg.github.com/accesso-app/backend/api-internal:latest
+    restart: always
+    expose:
+      - "9008"
+    depends_on:
+      - database
+    networks:
+      - entry
+    environment:
+      RUST_LOG: info
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      DATABASE_HOST: database
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
+      LISTEN_PORT: "9008"
+      LISTEN_HOST: "0.0.0.0"
+      SG_API_KEY: ${SENDGRID_API_KEY}
+      SG_APPLICATION_HOST: localhost:3000
+      SG_EMAIL_CONFIRM_URL_PREFIX: /register/confirm-
+      SG_EMAIL_CONFIRM_TEMPLATE: d-eec45c55c0364140bf38172e021c8ea5
+      SG_SENDER_EMAIL: no-reply@accesso.sova.dev
+
   api-public:
     container_name: accesso-api-public
     image: docker.pkg.github.com/accesso-app/backend/api-public:latest
@@ -48,7 +73,6 @@ services:
       RUST_LOG: info
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      # PREVIEW_QUEUE_URL: http://preview-queue:8080
       POSTGRES_DB: ${POSTGRES_DB}
       DATABASE_HOST: database
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
@@ -58,19 +82,21 @@ services:
       SG_APPLICATION_HOST: localhost:3000
       SG_EMAIL_CONFIRM_URL_PREFIX: /register/confirm-
       SG_EMAIL_CONFIRM_TEMPLATE: d-eec45c55c0364140bf38172e021c8ea5
-      SG_SENDER_EMAIL: no-reply@auth-dev.atomix.team
+      SG_SENDER_EMAIL: no-reply@accesso.sova.dev
 
   frontend:
     container_name: accesso-frontend
     image: docker.pkg.github.com/accesso-app/frontend/main:latest
+    depends_on:
+      - api-internal
     expose:
       - "3000"
     networks:
       - entry
     environment:
-      PUBLIC_URL: https://auth.local
-      IMAGE_URL: https://auth.local/images
-      BACKEND_URL: http://accesso-api-public:9009
+      PUBLIC_URL: https://accesso.local
+      IMAGE_URL: https://accesso.local/images
+      BACKEND_URL: http://accesso-api-internal:9008
 
   facade:
     container_name: accesso-facade
@@ -79,26 +105,20 @@ services:
       - 443:443
       - 80:80
     depends_on:
-      - frontend
       - api-public
+      - api-internal
+      - frontend
     networks:
       entry:
         aliases:
-          - auth.local
+          - accesso.local
     volumes:
       - "${PWD}/tls/accesso.crt:/var/lib/accesso/tls/accesso.crt"
       - "${PWD}/tls/accesso.pem:/var/lib/accesso/tls/accesso.pem"
       - "${PWD}/tls/dhparam.pem:/etc/nginx/ssl/dhparam.pem"
       - image-storage:/images
     environment:
-      SERVER_NAME: auth.local
+      SERVER_NAME: accesso.local
       MAIN_UPSTREAM: accesso-frontend:3000
-      BACKEND_UPSTREAM: accesso-api-public:9009
-  # admin:
-  #   container_name: accesso-admin
-  #   image: docker.pkg.github.com/accesso-app/admin/admin:latest
-  #   networks:
-  #     - entry
-  #   expose: # ???
-  #     - "80"
-  #     - "443"
+      API_INTERNAL_UPSTREAM: accesso-api-internal:9008
+      API_PUBLIC_UPSTREAM: accesso-api-public:9009

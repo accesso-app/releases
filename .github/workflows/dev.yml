@@ -8,6 +8,7 @@ on:
       - "docker-compose.yaml"
       - "dev.yaml"
       - ".github/workflows/dev.yml"
+      - "facade/*"
   repository_dispatch:
     types:
       - deploy-dev

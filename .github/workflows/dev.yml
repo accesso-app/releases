@@ -100,7 +100,7 @@ jobs:
         if: success()
         with:
           token: '${{ github.token }}'
-          environment_url: https://auth-dev.atomix.team
+          environment_url: https://accesso.sova.dev
           state: success
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 

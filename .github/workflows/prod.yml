@@ -1,12 +1,6 @@
 name: PRODUCTION CI
 
-"on":
-  # push:
-  #   branches:
-  #     - master
-  #   paths:
-  #     - "prod.yaml"
-  #     - ".github/workflows/prod.yml"
+on:
   workflow_dispatch:
 
 jobs:
@@ -26,7 +20,6 @@ jobs:
         name: Deployment progress
         with:
           token: '${{ github.token }}'
-          environment: production
           state: in_progress
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
@@ -70,7 +63,6 @@ jobs:
           token: '${{ github.token }}'
           environment_url: https://${{ secrets.PROD_HOSTNAME }}
           state: success
-          environment: production
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
       - uses: sergeysova/deployment-status@releases/v1.1
@@ -79,5 +71,4 @@ jobs:
         with:
           token: '${{ github.token }}'
           state: failure
-          environment: production
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}

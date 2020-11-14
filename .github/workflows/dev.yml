@@ -11,32 +11,54 @@ on:
   repository_dispatch:
     types:
       - deploy-dev
-  project_card:
-    types: [created]
-  
   workflow_dispatch:
 
 jobs:
-  deploy:
-    name: Deploy ${{ github.event.client_payload.github.repository }}
+  build-facade:
+    name: Build facade image
     runs-on: ubuntu-latest
 
     steps:
-      - name: Dispatcher ${{ github.event.client_payload.github.repository }}
-        if: github.event.client_payload
-        run: echo Dispatcher ${{ github.event.client_payload.github.repository }}
+      - uses: actions/checkout@v2
 
+      - name: Detect facade changes
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          list-files: none
+          filters: |
+            facade:
+              - 'facade/**'
+
+      - name: Publish Docker Image
+        if: steps.changes.outpus.facade == 'true'
+        uses: sergeysova/docker-publish-action@v1
+        with:
+          image: accesso-app/releases/facade
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          dockerfile: facade/Dockerfile
+          tag_semver: skip
+          tag_separator: "@"
+          semver_higher: true
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
       - uses: chrnorm/deployment-action@releases/v1
         name: Create GitHub Deployment
         id: deployment
         with:
           token: '${{ github.token }}'
           environment: development
+
       - uses: sergeysova/deployment-status@releases/v1.1
         name: Deployment progress
         with:
           token: '${{ github.token }}'
-          environment: development
           state: in_progress
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
@@ -80,7 +102,6 @@ jobs:
           token: '${{ github.token }}'
           environment_url: https://auth-dev.atomix.team
           state: success
-          environment: development
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
       - uses: sergeysova/deployment-status@releases/v1.1
@@ -89,5 +110,4 @@ jobs:
         with:
           token: '${{ github.token }}'
           state: failure
-          environment: development
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}

@@ -82,7 +82,7 @@ jobs:
           envs: DB_NAME,DB_USER,DB_PASS,SENDGRID_API_KEY,RELEASE_SHA,GITHUB_TOKEN,DOCKER_USERNAME
           script_stop: true
           script: |
-            cd releases
+            cd accesso-releases
             git reset --hard HEAD
             git clean -f
             git fetch -p

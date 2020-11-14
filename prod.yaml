@@ -4,6 +4,7 @@ version: "3.7"
 
 # mkdir -p /mnt/volume_nyc1_01/accesso/images
 # mkdir -p /mnt/volume_nyc1_01/accesso/postgres
+# mkdir -p /mnt/volume_nyc1_01/accesso/webroot
 ##
 ## issue one certificate with let's encrypt
 ## for accesso.app
@@ -17,6 +18,13 @@ volumes:
     driver_opts:
       type: none
       device: "/mnt/volume_nyc1_01/accesso/images"
+      o: bind
+
+  facade-webroot:
+    driver: local
+    driver_opts:
+      type: none
+      device: "/mnt/volume_nyc1_01/accesso/webroot"
       o: bind
 
 services:
@@ -53,6 +61,7 @@ services:
       - /etc/letsencrypt/live/accesso.app/privkey.pem:/var/lib/accesso/tls/accesso.pem:ro
       - /usr/local/var/accesso/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem:ro
       - image-storage:/images
+      - facade-webroot:/webroot
     environment:
       SERVER_NAME: accesso.app
       WEB_EXTRA: ''

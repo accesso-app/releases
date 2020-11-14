@@ -8,6 +8,13 @@ volumes:
       device: "${PWD}/data/images"
       o: bind
 
+  facade-webroot:
+    driver: local
+    driver_opts:
+      type: none
+      device: "${PWD}/data/webroot"
+      o: bind
+
   postgres-storage:
     driver: local
     driver_opts:
@@ -117,6 +124,7 @@ services:
       - "${PWD}/tls/accesso.pem:/var/lib/accesso/tls/accesso.pem"
       - "${PWD}/tls/dhparam.pem:/etc/nginx/ssl/dhparam.pem"
       - image-storage:/images
+      - facade-webroot:/webroot
     environment:
       SERVER_NAME: accesso.local
       MAIN_UPSTREAM: accesso-frontend:3000

@@ -72,7 +72,7 @@ jobs:
           SENDGRID_API_KEY: ${{ secrets.DEV_SENDGRID_API_KEY }}
           RELEASE_SHA: ${{ github.sha }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCKER_USERNAME: ${{ secrets.DEV_DOCKER_USERNAME }}
+          DOCKER_USERNAME: ${{ github.actor }}
         with:
           host: ${{ secrets.DEV_HOSTNAME }}
           username: ${{ secrets.DEV_USER }}

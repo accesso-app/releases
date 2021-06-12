@@ -43,7 +43,7 @@ services:
 
   api-internal:
     container_name: accesso-api-internal
-    image: docker.pkg.github.com/accesso-app/backend/api-internal:latest
+    image: docker.pkg.github.com/accesso-app/backend/api-internal:20210124-104630-0d9457
     restart: always
     expose:
       - "9008"
@@ -68,7 +68,7 @@ services:
 
   api-public:
     container_name: accesso-api-public
-    image: docker.pkg.github.com/accesso-app/backend/api-public:latest
+    image: docker.pkg.github.com/accesso-app/backend/api-public:20210124-104632-0d9457
     restart: always
     expose:
       - "9009"

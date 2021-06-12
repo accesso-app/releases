@@ -28,6 +28,14 @@ volumes:
       o: bind
 
 services:
+  # DEV specific service to update letsencrypt
+  certbot:
+    container_name: accesso-certbot
+    image: certbot/certbot
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+
   database:
     volumes:
       - /usr/local/var/accesso/postgres:/var/lib/postgresql/data

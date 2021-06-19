@@ -1,17 +1,6 @@
 name: Dev STOP
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - "docker-compose.yaml"
-      - "dev.yaml"
-      - ".github/workflows/dev.yml"
-      - "facade/*"
-  repository_dispatch:
-    types:
-      - deploy-dev
   workflow_dispatch:
 
 jobs:

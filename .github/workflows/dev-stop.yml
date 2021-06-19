@@ -1,0 +1,54 @@
+name: Dev STOP
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "docker-compose.yaml"
+      - "dev.yaml"
+      - ".github/workflows/dev.yml"
+      - "facade/*"
+  repository_dispatch:
+    types:
+      - deploy-dev
+  workflow_dispatch:
+
+jobs:
+  
+  stop:
+    name: Stop Docker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH
+        uses: appleboy/ssh-action@v0.0.7
+        env:
+          DB_NAME: ${{ secrets.DEV_DB }}
+          DB_USER: ${{ secrets.DEV_DB_USER }}
+          DB_PASS: ${{ secrets.DEV_DB_PASSWORD }}
+          SENDGRID_API_KEY: ${{ secrets.DEV_SENDGRID_API_KEY }}
+          RELEASE_SHA: ${{ github.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DOCKER_USERNAME: ${{ github.actor }}
+        with:
+          host: ${{ secrets.DEV_HOSTNAME }}
+          username: ${{ secrets.DEV_USER }}
+          port: ${{ secrets.DEV_PORT }}
+          key: ${{ secrets.DEV_SSH_PRIVATE }}
+          passphrase: ${{ secrets.DEV_SSH_PASSPHRASE }}
+          envs: DB_NAME,DB_USER,DB_PASS,SENDGRID_API_KEY,RELEASE_SHA,GITHUB_TOKEN,DOCKER_USERNAME
+          script_stop: true
+          script: |
+            cd accesso-releases
+            git reset --hard HEAD
+            git clean -f
+            git fetch -p
+            git checkout $RELEASE_SHA
+            docker login docker.pkg.github.com --username $DOCKER_USERNAME -p $GITHUB_TOKEN
+            export POSTGRES_DB="$DB_NAME"
+            export POSTGRES_USER="$DB_USER"
+            export POSTGRES_PASSWORD="$DB_PASS"
+            export SENDGRID_API_KEY="$SENDGRID_API_KEY"
+            docker-compose -f docker-compose.yaml -f dev.yaml down
+            

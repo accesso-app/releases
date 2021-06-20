@@ -32,7 +32,7 @@ jobs:
               - 'facade/**'
 
       - name: Publish Docker Image
-        if: steps.changes.outpus.facade == 'true'
+        if: steps.changes.outputs.facade == 'true'
         uses: sergeysova/docker-publish-action@v1
         with:
           image: accesso-app/releases/facade

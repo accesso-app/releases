@@ -18,7 +18,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ~/accesso-releases
+        working-directory: /home/www/accesso-releases
 
     steps:
       - uses: chrnorm/deployment-action@releases/v1

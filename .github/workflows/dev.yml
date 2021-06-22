@@ -49,6 +49,10 @@ jobs:
     runs-on: [self-hosted, dev]
     needs: build-facade
 
+    defaults:
+      run:
+        working-directory: /home/www/accesso-releases
+
     steps:
       - uses: chrnorm/deployment-action@releases/v1
         name: Create GitHub Deployment
@@ -65,7 +69,6 @@ jobs:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
       - name: Checkout release
-        working-directory: /home/www/accesso-releases
         run: |
           git reset --hard HEAD
           git clean -f
@@ -73,7 +76,6 @@ jobs:
           git checkout ${{ github.sha }}
 
       - name: Docker compose
-        working-directory: /home/www/accesso-releases
         run: |
           docker login docker.pkg.github.com --username ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           export POSTGRES_DB="${{ secrets.DEV_DB }}"

@@ -9,6 +9,10 @@ jobs:
     name: Stop Docker
     runs-on: [self-hosted, dev]
 
+    defaults:
+      run:
+        working-directory: ~/accesso-releases
+
     steps:
       - name: Checkout release
         run: |

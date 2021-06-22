@@ -49,6 +49,10 @@ jobs:
     runs-on: [self-hosted, dev]
     needs: build-facade
 
+    defaults:
+      run:
+        working-directory: ~/accesso-releases
+
     steps:
       - uses: chrnorm/deployment-action@releases/v1
         name: Create GitHub Deployment
@@ -66,7 +70,6 @@ jobs:
 
       - name: Checkout release
         run: |
-          cd ~/accesso-releases
           git reset --hard HEAD
           git clean -f
           git fetch -p

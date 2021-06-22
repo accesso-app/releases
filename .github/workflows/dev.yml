@@ -65,7 +65,7 @@ jobs:
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
       - name: Checkout release
-        working-directory: ~/accesso-releases
+        working-directory: /home/www/accesso-releases
         run: |
           git reset --hard HEAD
           git clean -f
@@ -73,7 +73,7 @@ jobs:
           git checkout ${{ github.sha }}
 
       - name: Docker compose
-        working-directory: ~/accesso-releases
+        working-directory: /home/www/accesso-releases
         run: |
           docker login docker.pkg.github.com --username ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           export POSTGRES_DB="${{ secrets.DEV_DB }}"

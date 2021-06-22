@@ -46,7 +46,8 @@ jobs:
 
   deploy:
     name: Deploy
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, dev]
+    needs: build-facade
 
     steps:
       - uses: chrnorm/deployment-action@releases/v1
@@ -63,38 +64,24 @@ jobs:
           state: in_progress
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
-      - name: SSH
-        uses: appleboy/ssh-action@v0.0.7
-        env:
-          DB_NAME: ${{ secrets.DEV_DB }}
-          DB_USER: ${{ secrets.DEV_DB_USER }}
-          DB_PASS: ${{ secrets.DEV_DB_PASSWORD }}
-          SENDGRID_API_KEY: ${{ secrets.DEV_SENDGRID_API_KEY }}
-          RELEASE_SHA: ${{ github.sha }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DOCKER_USERNAME: ${{ github.actor }}
-        with:
-          host: ${{ secrets.DEV_HOSTNAME }}
-          username: ${{ secrets.DEV_USER }}
-          port: ${{ secrets.DEV_PORT }}
-          key: ${{ secrets.DEV_SSH_PRIVATE }}
-          passphrase: ${{ secrets.DEV_SSH_PASSPHRASE }}
-          envs: DB_NAME,DB_USER,DB_PASS,SENDGRID_API_KEY,RELEASE_SHA,GITHUB_TOKEN,DOCKER_USERNAME
-          script_stop: true
-          script: |
-            cd accesso-releases
-            git reset --hard HEAD
-            git clean -f
-            git fetch -p
-            git checkout $RELEASE_SHA
-            docker login docker.pkg.github.com --username $DOCKER_USERNAME -p $GITHUB_TOKEN
-            export POSTGRES_DB="$DB_NAME"
-            export POSTGRES_USER="$DB_USER"
-            export POSTGRES_PASSWORD="$DB_PASS"
-            export SENDGRID_API_KEY="$SENDGRID_API_KEY"
-            docker-compose -f docker-compose.yaml -f dev.yaml pull
-            docker-compose -f docker-compose.yaml -f dev.yaml build
-            docker-compose -f docker-compose.yaml -f dev.yaml up -d --remove-orphans
+      - name: Checkout release
+        run: |
+          cd ~/accesso-releases
+          git reset --hard HEAD
+          git clean -f
+          git fetch -p
+          git checkout ${{ github.sha }}
+
+      - name: Checkout release
+        run: |
+          docker login docker.pkg.github.com --username ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
+          export POSTGRES_DB="${{ secrets.DEV_DB }}"
+          export POSTGRES_USER="${{ secrets.DEV_DB_USER }}"
+          export POSTGRES_PASSWORD="${{ secrets.DEV_DB_PASSWORD }}"
+          export SENDGRID_API_KEY="${{ secrets.DEV_SENDGRID_API_KEY }}"
+          docker-compose -f docker-compose.yaml -f dev.yaml pull
+          docker-compose -f docker-compose.yaml -f dev.yaml build
+          docker-compose -f docker-compose.yaml -f dev.yaml up -d --remove-orphans
 
       - uses: sergeysova/deployment-status@releases/v1.1
         name: Deployment success

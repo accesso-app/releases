@@ -5,10 +5,10 @@ Deploy workflows
 ## Setup local instance
 
 1. Install `docker` ([install for mac](https://docs.docker.com/docker-for-mac/install/)) and `docker-compose` ([install](https://docs.docker.com/compose/install/))
+1. Install docker `loki` plugin. `docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions`
 1. Clone this repository to `accesso-releases` directory (it helps to identify images in `docker ps` list)
 1. `cd accesso-releases`
 1. Install certificate `./tls/accesso.crt` to trusted keychain
-1. Add `127.0.0.1 accesso.local` to `/etc/hosts` (hint: use `sudo`)
 1. Copy `.env.sample` to `.env`. Modify content of `.env. if required
 1. Start service with `./start-local.sh`. Stop it with `CTRL+C`
 

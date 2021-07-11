@@ -1,20 +1,6 @@
 version: "3.7"
 
 volumes:
-  image-storage:
-    driver: local
-    driver_opts:
-      type: none
-      device: "${PWD}/data/images"
-      o: bind
-
-  facade-webroot:
-    driver: local
-    driver_opts:
-      type: none
-      device: "${PWD}/data/webroot"
-      o: bind
-
   postgres-storage:
     driver: local
     driver_opts:
@@ -22,18 +8,131 @@ volumes:
       device: "${PWD}/data/postgres"
       o: bind
 
+x-logging: &logging
+  logging:
+    driver: loki
+    options:
+      loki-url: "http://172.18.0.2:3100/loki/api/v1/push"
+
 networks:
-  entry:
+  logging:
+    external: true
+  accesso:
 
 services:
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    hostname: loki
+    expose:
+      - "3100"
+    environment:
+      - JAEGER_AGENT_HOST=tempo
+      - JAEGER_ENDPOINT=http://tempo:14268/api/traces
+      - JAEGER_SAMPLER_TYPE=const
+      - JAEGER_SAMPLER_PARAM=1
+    <<: *logging
+    networks:
+      logging:
+        ipv4_address: 172.18.0.2
+      accesso:
+
+  traefik:
+    container_name: traefik
+    hostname: traefik
+    image: traefik:v2.4
+    <<: *logging
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.traefik: "true"
+    networks:
+      accesso:
+    environment:
+      DOMAIN_NAME: ${DOMAIN_NAME}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./services/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./services/traefik/config-local.yml:/etc/traefik/config.yml:ro
+      - ./tls:/etc/tls:ro
+    restart: unless-stopped
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    <<: *logging
+    command: [ "--config.file=/etc/prometheus.yaml" ]
+    volumes:
+      - ./services/grafana/prometheus.yaml:/etc/prometheus.yaml
+    labels:
+      traefik.enable: "false"
+    networks:
+      accesso:
+
+  grafana:
+    image: grafana/grafana:latest
+    <<: *logging
+    container_name: grafana
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.grafana-3000.loadbalancer.server.port: "3000"
+      traefik.http.routers.grafana.rule: "Host(`grafana.${DOMAIN_NAME}`)"
+      traefik.http.routers.grafana.service: "grafana-3000"
+      traefik.http.routers.grafana.tls: "true"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+    networks:
+      accesso:
+    volumes:
+    - ./services/grafana/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+
+
+  tempo:
+    image: grafana/tempo:latest
+    <<: *logging
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    expose:
+      - "14268"  # jaeger ingest
+      - "3100"   # tempo
+      - "55680"  # otlp grpc
+      - "55681"  # otlp http
+      - "9411"   # zipkin
+    networks:
+      accesso:
+    volumes:
+      - ./services/grafana/tempo-local.yaml:/etc/tempo.yaml
+      - ./data/tempo-data:/tmp/tempo
+    restart: "no"
+
+  otel-collector:
+    container_name: otel-collector
+    image: otel/opentelemetry-collector:latest
+    <<: *logging
+    command: [ "--config=/etc/otel-collector.yaml" ]
+    ports:
+    - "4317"
+    - "6831"
+    volumes:
+      - ./services/otel/otel-collector.yaml:/etc/otel-collector.yaml
+    networks:
+      accesso:
+
   database:
     container_name: accesso-database
-    image: postgres:11.5
-    restart: always
+    image: postgres:13
+    <<: *logging
+    restart: "no"
     volumes:
       - "postgres-storage:/var/lib/postgresql/data"
     networks:
-      - entry
+      accesso:
+    labels:
+      traefik.enable: "false"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -42,18 +141,26 @@ services:
       - "5432"
 
   api-internal:
-    container_name: accesso-api-internal
+    container_name: api-internal
     image: docker.pkg.github.com/accesso-app/backend/api-internal:20210124-104630-0d9457
-    restart: always
+    <<: *logging
     expose:
       - "9008"
     depends_on:
       - database
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.api-internal.loadbalancer.server.port: "9008"
+      traefik.http.routers.api-internal.rule: "Host(`api-internal.${DOMAIN_NAME}`)"
+      traefik.http.routers.api-internal.service: "api-internal"
+      traefik.http.routers.api-internal.tls: "true"
     networks:
-      - entry
+      accesso:
+    restart: "no"
+
     environment:
       ACCESSO_DATABASE__DATABASE: ${POSTGRES_DB}
-      ACCESSO_DATABASE__HOST: database
+      ACCESSO_DATABASE__HOST: accesso-database
       ACCESSO_DATABASE__PASSWORD: ${POSTGRES_PASSWORD}
       ACCESSO_DATABASE__POOL_SIZE: 4
       ACCESSO_DATABASE__USER: ${POSTGRES_USER}
@@ -63,19 +170,21 @@ services:
       ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
       ACCESSO_SERVER__HOST: "0.0.0.0"
       ACCESSO_SERVER__PORT: "9008"
-      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
-      RUST_LOG: info
+      OPENTELEMETRY_ENDPOINT_URL: "http://otel-collector:4317"
+      RUST_LOG: "debug"
+      DATABASE_URL: ${DATABASE_URL}
 
   api-public:
     container_name: accesso-api-public
     image: docker.pkg.github.com/accesso-app/backend/api-public:20210124-104632-0d9457
-    restart: always
+    <<: *logging
+    restart: "no"
     expose:
       - "9009"
     depends_on:
       - database
     networks:
-      - entry
+      accesso:
     environment:
       ACCESSO_DATABASE__DATABASE: ${POSTGRES_DB}
       ACCESSO_DATABASE__HOST: database
@@ -94,39 +203,20 @@ services:
   frontend:
     container_name: accesso-frontend
     image: docker.pkg.github.com/accesso-app/frontend/main:latest
+    <<: *logging
+    labels:
+      traefik.enable: "true"
+      traefik.http.services.frontend.loadbalancer.server.port: "3000"
+      traefik.http.routers.frontend.tls: "true"
+      traefik.http.routers.frontend.rule: "Host(`${DOMAIN_NAME}`)"
+      traefik.http.routers.frontend.service: "frontend"
     depends_on:
       - api-internal
     expose:
       - "3000"
     networks:
-      - entry
+      accesso:
     environment:
       PUBLIC_URL: https://accesso.local
       IMAGE_URL: https://accesso.local/images
-      BACKEND_URL: http://accesso-api-internal:9008
-
-  facade:
-    container_name: accesso-facade
-    image: docker.pkg.github.com/accesso-app/releases/facade:latest
-    ports:
-      - 443:443
-      - 80:80
-    depends_on:
-      - api-public
-      - api-internal
-      - frontend
-    networks:
-      entry:
-        aliases:
-          - accesso.local
-    volumes:
-      - "${PWD}/tls/accesso.crt:/var/lib/accesso/tls/accesso.crt"
-      - "${PWD}/tls/accesso.pem:/var/lib/accesso/tls/accesso.pem"
-      - "${PWD}/tls/dhparam.pem:/etc/nginx/ssl/dhparam.pem"
-      - image-storage:/images
-      - facade-webroot:/webroot
-    environment:
-      SERVER_NAME: accesso.local
-      MAIN_UPSTREAM: accesso-frontend:3000
-      API_INTERNAL_UPSTREAM: accesso-api-internal:9008
-      API_PUBLIC_UPSTREAM: accesso-api-public:9009
+      BACKEND_URL: http://api-internal.${DOMAIN_NAME}:9008

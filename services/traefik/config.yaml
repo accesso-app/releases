@@ -1,0 +1,18 @@
+http:
+  routers:
+    traefik:
+      rule: Host(`traefik.{{ env "DOMAIN_NAME" }}`)
+      service: "api@internal"
+      tls:
+        domains:
+          - main: "{{ env "DOMAIN_NAME" }} "
+            sans:
+              - "*.{{ env "DOMAIN_NAME" }}"
+        certresolver: le
+      middlewares: "dashboard-auth"
+
+  middlewares:
+    dashboard-auth:
+      basicAuth:
+        users:
+          - "admin_accesso:$2y$10$vl60Pw4Rzl4RDv5tbawgEuj7A2chIc5FKE77EKsFLGtvZR/oxhdiO"

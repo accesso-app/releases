@@ -1,0 +1,45 @@
+global:
+  sendAnonymousUsage: false
+
+api:
+  dashboard: true
+
+providers:
+  docker:
+    endpoint: unix:///var/run/docker.sock
+    watch: true
+    exposedByDefault: false
+
+  file:
+    filename: /etc/traefik/config.yml
+    watch: true
+
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    address: :443
+
+certificatesResolvers:
+  le:
+    acme:
+      email: mail@sergeysova.com
+      storage: /letsencrypt/acme.json
+      tlsChallenge: true
+      httpChallenge:
+        entryPoint: web
+
+tracing:
+  serviceName: traefik
+  jaeger:
+    samplingParam: 1
+    localAgentHostPort: otel-collector:6831
+
+metrics:
+  prometheus: {}

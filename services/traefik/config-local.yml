@@ -1,0 +1,15 @@
+http:
+  routers:
+    traefik:
+      rule: "Host(`traefik.accesso.localhost`)"
+      service: "api@internal"
+      tls:
+        domains:
+          - main: "accesso.localhost"
+            sans:
+              - "*.accesso.localhost"
+
+tls:
+  certificates:
+    - certFile: "/etc/tls/accesso-local.cert"
+      keyFile: "/etc/tls/accesso-local.pem"

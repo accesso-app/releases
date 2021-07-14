@@ -171,7 +171,7 @@ services:
       ACCESSO_SERVER__PORT: "9008"
       OPENTELEMETRY_ENDPOINT_URL: "http://otel-collector:4317"
       RUST_LOG: "debug"
-      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
 
   api-public:
     container_name: accesso-api-public

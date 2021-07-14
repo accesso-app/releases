@@ -8,6 +8,8 @@ volumes:
       device: "${PWD}/data/postgres"
       o: bind
 
+  grafana-storage:
+
 x-logging: &logging
   logging:
     driver: loki
@@ -85,7 +87,7 @@ services:
       accesso:
     volumes:
     - ./services/grafana/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
-    - ./data/grafana:/var/lib/grafana
+    - grafana-storage:/var/lib/grafana
 
 
   tempo:

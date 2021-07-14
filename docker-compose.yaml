@@ -81,10 +81,6 @@ services:
       traefik.http.routers.grafana.rule: "Host(`grafana.${DOMAIN_NAME}`)"
       traefik.http.routers.grafana.service: "grafana-3000"
       traefik.http.routers.grafana.tls: "true"
-    environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_AUTH_DISABLE_LOGIN_FORM=true
     networks:
       accesso:
     volumes:

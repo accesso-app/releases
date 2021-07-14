@@ -18,7 +18,7 @@ datasources:
     basicAuth: false
     isDefault: true
     version: 1
-    editable: true
+    editable: false
     apiVersion: 1
     uid: tempo
   - name: Loki

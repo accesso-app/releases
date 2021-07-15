@@ -1,13 +1,4 @@
 http:
-  routers:
-    traefik:
-      rule: Host(`traefik.{{ env "DOMAIN_NAME" }}`)
-      service: "api@internal"
-      tls:
-        certresolver: le
-      middlewares: "dashboard-auth"
-      entrypoints: "websecure"
-
   middlewares:
     dashboard-auth:
       basicAuth:
@@ -17,3 +8,7 @@ http:
       stripPrefix:
         prefixes:
           - "/api/internal"
+    api-public-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/v0"

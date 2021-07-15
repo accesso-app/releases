@@ -3,6 +3,7 @@ global:
 
 api:
   dashboard: true
+  debug: true
 
 log:
   level: DEBUG
@@ -12,6 +13,7 @@ providers:
     endpoint: unix:///var/run/docker.sock
     watch: true
     exposedByDefault: false
+    network: "accesso"
 
   file:
     filename: /etc/traefik/config.yml

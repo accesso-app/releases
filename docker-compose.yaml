@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.7"
 
 volumes:
   postgres-storage:
@@ -141,7 +141,7 @@ services:
 
   api-internal:
     container_name: api-internal
-    image: docker.pkg.github.com/accesso-app/backend/api-internal:20210124-104630-0d9457
+    image: docker.pkg.github.com/accesso-app/backend/api-internal:latest
     <<: *logging
     expose:
       - "9008"
@@ -150,7 +150,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.services.api-internal.loadbalancer.server.port: "9008"
-      traefik.http.routers.api-internal.rule: "HostPathPrefix(`/api/internal`)"
+      traefik.http.routers.api-internal.rule: "PathPrefix(`/api/internal`)"
       traefik.http.routers.api-internal.service: "api-internal"
       traefik.http.routers.api-internal.tls: "true"
     networks:

@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.8"
 
 volumes:
   postgres-storage:
@@ -150,7 +150,7 @@ services:
     labels:
       traefik.enable: "true"
       traefik.http.services.api-internal.loadbalancer.server.port: "9008"
-      traefik.http.routers.api-internal.rule: "Host(`api-internal.${DOMAIN_NAME}`)"
+      traefik.http.routers.api-internal.rule: "HostPathPrefix(`/api/internal`)"
       traefik.http.routers.api-internal.service: "api-internal"
       traefik.http.routers.api-internal.tls: "true"
     networks:

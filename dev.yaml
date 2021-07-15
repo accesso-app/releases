@@ -19,10 +19,6 @@ services:
     labels:
       traefik.http.routers.grafana.tls.certresolver: "le"
 
-  database:
-    volumes:
-      - /usr/local/var/accesso/postgres:/var/lib/postgresql/data
-
 #  api-internal:
 #    image: "docker.pkg.github.com/accesso-app/backend/api-internal:latest"
 #    environment:

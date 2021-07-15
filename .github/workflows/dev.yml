@@ -51,6 +51,7 @@ jobs:
 
       - name: Docker compose
         run: |
+          docker login --username ${{ secrets.DOCKER_HUB_LOGIN }} -p ${{ DOCKER_HUB_TOKEN }}
           docker login docker.pkg.github.com --username ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           docker network inspect logging >/dev/null 2>&1 || docker network create --driver=bridge --subnet=172.18.0.0/16 --gateway 172.18.0.1 logging
           docker plugin inspect loki >/dev/null 2>&1 || docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions

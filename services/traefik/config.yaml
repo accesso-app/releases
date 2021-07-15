@@ -4,12 +4,9 @@ http:
       rule: Host(`traefik.{{ env "DOMAIN_NAME" }}`)
       service: "api@internal"
       tls:
-        domains:
-          - main: "{{ env "DOMAIN_NAME" }} "
-            sans:
-              - "*.{{ env "DOMAIN_NAME" }}"
         certresolver: le
       middlewares: "dashboard-auth"
+      entrypoints: "websecure"
 
   middlewares:
     dashboard-auth:

@@ -8,6 +8,16 @@ http:
       stripPrefix:
         prefixes:
           - "/v0"
+    security-headers:
+      headers:
+        frameDeny: true
+        sslRedirect: true
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+        contentTypeNosniff: true
+        isDevelopment: false
 
 tls:
   certificates:

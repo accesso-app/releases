@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - feature/monitoring
     paths:
       - "docker-compose.yaml"
       - "dev.yaml"

@@ -30,6 +30,9 @@ entryPoints:
           permanent: true
   websecure:
     address: :443
+    http:
+      middlewares:
+        - security-headers@file
 
 certificatesResolvers:
   le:

@@ -104,7 +104,7 @@ services:
     container_name: otel-collector
     image: otel/opentelemetry-collector:latest
     command: [ "--config=/etc/otel-collector.yaml" ]
-    ports:
+    expose:
     - "4317"
     - "6831"
     volumes:

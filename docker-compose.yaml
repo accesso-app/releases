@@ -168,6 +168,7 @@ services:
       - "9009"
     depends_on:
       - database
+      - api-internal
     labels:
       traefik.enable: "true"
       traefik.http.routers.api-public.rule: "Host(`api.${DOMAIN_NAME}`) && PathPrefix(`/v0`)"

@@ -5,21 +5,23 @@ Deploy workflows
 ## Setup local instance
 
 1. Install `docker` ([install for mac](https://docs.docker.com/docker-for-mac/install/)) and `docker-compose` ([install](https://docs.docker.com/compose/install/))
-1. Install docker `loki` plugin. `docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions`
 1. Clone this repository to `accesso-releases` directory (it helps to identify images in `docker ps` list)
 1. `cd accesso-releases`
 1. Install certificate `./tls/accesso.crt` to trusted keychain
 1. Copy `.env.sample` to `.env`. Modify content of `.env. if required
-1. Start service with `./start-local.sh`. Stop it with `CTRL+C`
+1. Start services with `docker-compose up -d`. Stop it with `docker-compose down`
 
 ## Instructions
+<details><summary>Install certificate</summary>
+Install mkcert:
 
-<details><summary>Install certificate on macOS</summary>
+# macOS
+```
+brew install mkcert
+brew install nss # if you use Firefox
+```
+# linux
+Get latest mkcert release from ([mkcert releases](https://github.com/FiloSottile/mkcert/releases))
 
-- Open `./tls/accesso.crt` with Keychain Access
-- Select `System` keychain and press "Add"
-- Open `System` keychain in Keychain Access, double click on `accesso.local` item
-- Expand "Trust" section, and change "When using this certificate" property to "Always trust"
-- Close `accesso.local` window and approve changes with password or Touch ID
-- Icon on `accesso.local` item in Keychain Access window should have small plus icon inside
+Run mkcert -install
 </details>

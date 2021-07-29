@@ -10,8 +10,8 @@ services:
       - ./services/traefik/config.yml:/etc/traefik/config.yml:ro
       - ./letsencrypt:/letsencrypt
     labels:
-      traefik.http.routers.traefik.tls.certresolver: "le"
-      traefik.http.routers.traefik.middlewares: "dashboard-auth@file"
+      traefik.http.routers.traefik-secure.tls.certresolver: "le"
+      traefik.http.routers.traefik-secure.middlewares: "dashboard-auth@file"
 
   grafana:
     labels:

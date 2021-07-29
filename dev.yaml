@@ -11,7 +11,7 @@ services:
       - ./letsencrypt:/letsencrypt
     labels:
       traefik.http.routers.traefik.tls.certresolver: "le"
-      #traefik.http.routers.traefik.middlewares: "dashboard-auth@file"
+      traefik.http.routers.traefik.middlewares: "dashboard-auth@file"
 
   grafana:
     labels:

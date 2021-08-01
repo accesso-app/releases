@@ -15,7 +15,6 @@ networks:
 services:
   vector:
     image: timberio/vector:latest-debian
-    container_name: vector
     hostname: vector
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -25,7 +24,6 @@ services:
 
   loki:
     image: grafana/loki:latest
-    container_name: loki
     hostname: loki
     expose:
       - "3100"
@@ -38,7 +36,6 @@ services:
       accesso:
 
   traefik:
-    container_name: traefik
     hostname: traefik
     image: traefik:v2.4
     labels:
@@ -64,7 +61,6 @@ services:
     restart: unless-stopped
 
   prometheus:
-    container_name: prometheus
     image: prom/prometheus:latest
     command: [ "--config.file=/etc/prometheus.yaml" ]
     volumes:
@@ -74,7 +70,6 @@ services:
 
   grafana:
     image: grafana/grafana:latest
-    container_name: grafana
     labels:
       traefik.enable: "true"
       traefik.http.routers.grafana.rule: "Host(`grafana.${DOMAIN_NAME}`)"
@@ -88,7 +83,6 @@ services:
 
   tempo:
     image: grafana/tempo:latest
-    container_name: tempo
     command: [ "-config.file=/etc/tempo.yaml" ]
     expose:
       - "14268"  # jaeger ingest
@@ -104,7 +98,6 @@ services:
     restart: "no"
 
   otel-collector:
-    container_name: otel-collector
     image: otel/opentelemetry-collector:latest
     command: [ "--config=/etc/otel-collector.yaml" ]
     expose:
@@ -116,7 +109,6 @@ services:
       accesso:
 
   database:
-    container_name: accesso-database
     image: postgres:13
     restart: "no"
     volumes:
@@ -133,7 +125,6 @@ services:
       - "5432"
 
   api-internal:
-    container_name: accesso-api-internal
     image: docker.pkg.github.com/accesso-app/backend/api-internal:latest
     expose:
       - "9008"
@@ -164,7 +155,6 @@ services:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
 
   api-public:
-    container_name: accesso-api-public
     image: docker.pkg.github.com/accesso-app/backend/api-public:latest
     restart: "no"
     expose:
@@ -196,7 +186,6 @@ services:
       RUST_LOG: info
 
   frontend:
-    container_name: accesso-frontend
     image: docker.pkg.github.com/accesso-app/frontend/main:latest
     labels:
       traefik.enable: "true"
@@ -209,4 +198,4 @@ services:
     environment:
       PUBLIC_URL: https://accesso.local
       IMAGE_URL: https://accesso.local/images
-      BACKEND_URL: http://api-internal.${DOMAIN_NAME}:9008
+      BACKEND_URL: https://accesso.localhost/api/internal

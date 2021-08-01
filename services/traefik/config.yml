@@ -1,0 +1,25 @@
+http:
+  middlewares:
+    dashboard-auth:
+      basicAuth:
+        users:
+          - "admin_accesso:$2y$10$vl60Pw4Rzl4RDv5tbawgEuj7A2chIc5FKE77EKsFLGtvZR/oxhdiO"
+    api-internal-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/api/internal"
+    api-public-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/v0"
+    security-headers:
+      headers:
+        frameDeny: true
+        sslRedirect: true
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+        contentTypeNosniff: true
+        isDevelopment: false
+

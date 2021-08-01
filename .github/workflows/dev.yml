@@ -8,46 +8,18 @@ on:
       - "docker-compose.yaml"
       - "dev.yaml"
       - ".github/workflows/dev.yml"
-      - "facade/*"
+      - "services/*"
   repository_dispatch:
     types:
       - deploy-dev
   workflow_dispatch:
 
 jobs:
-  build-facade:
-    name: Build facade image
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Detect facade changes
-        uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          list-files: none
-          filters: |
-            facade:
-              - 'facade/**'
-
-      - name: Publish Docker Image
-        if: steps.changes.outputs.facade == 'true'
-        uses: sergeysova/docker-publish-action@v1
-        with:
-          image: accesso-app/releases/facade
-          registry: docker.pkg.github.com
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          dockerfile: facade/Dockerfile
-          tag_semver: skip
-          tag_separator: "@"
-          semver_higher: true
-
   deploy:
+    env:
+      DOMAIN_NAME: 'accesso.sova.dev'
     name: Deploy
     runs-on: [self-hosted, dev]
-    needs: build-facade
 
     defaults:
       run:
@@ -77,11 +49,13 @@ jobs:
 
       - name: Docker compose
         run: |
+          docker login --username ${{ secrets.DOCKER_HUB_LOGIN }} -p ${{ secrets.DOCKER_HUB_TOKEN }}
           docker login docker.pkg.github.com --username ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}
           export POSTGRES_DB="${{ secrets.DEV_DB }}"
           export POSTGRES_USER="${{ secrets.DEV_DB_USER }}"
           export POSTGRES_PASSWORD="${{ secrets.DEV_DB_PASSWORD }}"
           export SENDGRID_API_KEY="${{ secrets.DEV_SENDGRID_API_KEY }}"
+          export DOMAIN_NAME="${{ env.DOMAIN_NAME }}"
           docker-compose -f docker-compose.yaml -f dev.yaml pull
           docker-compose -f docker-compose.yaml -f dev.yaml build
           docker-compose -f docker-compose.yaml -f dev.yaml up -d --remove-orphans

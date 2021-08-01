@@ -1,0 +1,19 @@
+name: Dev cleanup CI
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * *'
+
+jobs:
+  cleanup:
+    name: Cleanup
+    runs-on: [self-hosted, dev]
+
+    defaults:
+      run:
+        working-directory: /home/www/accesso-releases
+
+    steps:
+      - name: Clean docker containers and volumes
+        run: docker system prune -a --volumes

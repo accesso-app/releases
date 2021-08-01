@@ -2,89 +2,42 @@ version: "3.7"
 
 # https://accesso.sova.dev
 
-# mkdir -p /usr/local/var/accesso/images
-# mkdir -p /usr/local/var/accesso/postgres
-# mkdir -p /usr/local/var/accesso/webroot
-##
-## issue one certificate with let's encrypt with webroot
-## for accesso.sova.dev
-#
-# mkdir -p /usr/local/var/accesso/tls
-# openssl dhparam -out /usr/local/var/accesso/tls/dhparam.pem 2048
-
-volumes:
-  image-storage:
-    driver: local
-    driver_opts:
-      type: none
-      device: "/usr/local/var/accesso/images"
-      o: bind
-
-  facade-webroot:
-    driver: local
-    driver_opts:
-      type: none
-      device: "/usr/local/var/accesso/webroot"
-      o: bind
-
 services:
-  # DEV specific service to update letsencrypt
-  certbot:
-    container_name: accesso-certbot
-    image: certbot/certbot
+  traefik:
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt
-      - /var/lib/letsencrypt:/var/lib/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./services/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./services/traefik/config.yml:/etc/traefik/config.yml:ro
+      - ./letsencrypt:/letsencrypt
+    labels:
+      traefik.http.routers.traefik-secure.tls.certresolver: "le"
+      traefik.http.routers.traefik-secure.middlewares: "dashboard-auth@file"
 
-  database:
-    volumes:
-      - /usr/local/var/accesso/postgres:/var/lib/postgresql/data
+  grafana:
+    labels:
+      traefik.http.routers.grafana.tls.certresolver: "le"
 
   api-internal:
     image: "docker.pkg.github.com/accesso-app/backend/api-internal:latest"
     environment:
       ACCESSO_SENDGRID__APPLICATION_HOST: accesso.sova.dev
       ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
+    labels:
+      traefik.http.routers.traefik.tls.certresolver: "le"
 
   api-public:
     image: "docker.pkg.github.com/accesso-app/backend/api-public:latest"
     environment:
       ACCESSO_SENDGRID__APPLICATION_HOST: accesso.sova.dev
       ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
+    labels:
+      traefik.http.routers.api-public.tls.certresolver: "le"
 
   frontend:
     image: "docker.pkg.github.com/accesso-app/frontend/main:latest"
+    labels:
+      traefik.http.routers.frontend.tls.certresolver: "le"
     environment:
       PUBLIC_URL: https://accesso.sova.dev
       IMAGE_URL: https://accesso.sova.dev/images
       DEBUG: "true"
-
-  facade:
-    image: "docker.pkg.github.com/accesso-app/releases/facade:latest"
-    networks:
-      entry:
-        aliases:
-          - accesso.sova.dev
-    volumes:
-      - /etc/letsencrypt/live/accesso.sova.dev/fullchain.pem:/var/lib/accesso/tls/accesso.crt:ro
-      - /etc/letsencrypt/live/accesso.sova.dev/privkey.pem:/var/lib/accesso/tls/accesso.pem:ro
-      - /usr/local/var/accesso/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem:ro
-      - image-storage:/images
-      - facade-webroot:/webroot
-    environment:
-      SERVER_NAME: accesso.sova.dev
-      WEB_EXTRA: if ($$request_method = 'OPTIONS') {
-        add_header 'Access-Control-Allow-Origin' '*';
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-        add_header 'Access-Control-Max-Age' 1728000;
-        add_header 'Content-Type' 'text/plain; charset=utf-8';
-        add_header 'Content-Length' 0;
-        return 204;
-        }
-        if ($$request_method = 'POST') {
-        add_header 'Access-Control-Allow-Origin' '*';
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-        add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
-        add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
-        }

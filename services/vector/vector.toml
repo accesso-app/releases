@@ -1,0 +1,27 @@
+[sources.docker-local]
+type = "docker_logs"
+docker_host = "/var/run/docker.sock"
+exclude_containers = []
+
+multiline.condition_pattern = '^\x{200B}'
+multiline.mode = "halt_before"
+multiline.start_pattern = '^\x{200B}'
+multiline.timeout_ms = 1000
+
+
+[sinks.loki]
+type = "loki"
+inputs = ["docker*"]
+endpoint = "http://loki:3100"
+
+healthcheck.enabled = true
+
+encoding.codec = "json"
+
+labels.forwarder = 'vector'
+labels.host = '{{ host }}'
+labels.container_name = '{{ container_name }}'
+labels.compose_service = '{{ label.com\.docker\.compose\.service }}'
+labels.compose_project = '{{ label.com\.docker\.compose\.project }}'
+labels.source = '{{ stream }}'
+labels.category = 'dockerlogs'

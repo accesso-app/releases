@@ -1,0 +1,25 @@
+http:
+  middlewares:
+    api-internal-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/api/internal"
+    api-public-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/v0"
+    security-headers:
+      headers:
+        frameDeny: true
+        sslRedirect: true
+        stsSeconds: 31536000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        forceSTSHeader: true
+        contentTypeNosniff: true
+        isDevelopment: false
+
+tls:
+  certificates:
+    - certFile: "/tls/accesso-local.cert"
+      keyFile: "/tls/accesso-local.pem"

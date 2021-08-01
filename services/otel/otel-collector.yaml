@@ -1,0 +1,24 @@
+extensions:
+  zpages:
+    endpoint: :55679
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+  jaeger:
+    protocols:
+      grpc:
+      thrift_binary:
+      thrift_compact:
+      thrift_http:
+exporters:
+  otlp:
+    endpoint: tempo:4317
+    insecure: true
+service:
+  pipelines:
+    traces:
+      receivers: [otlp,jaeger]
+      exporters: [otlp]
+  extensions: [zpages]

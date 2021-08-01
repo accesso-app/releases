@@ -140,7 +140,7 @@ services:
     restart: "no"
     environment:
       ACCESSO_DATABASE__DATABASE: ${POSTGRES_DB}
-      ACCESSO_DATABASE__HOST: accesso-database
+      ACCESSO_DATABASE__HOST: database
       ACCESSO_DATABASE__PASSWORD: ${POSTGRES_PASSWORD}
       ACCESSO_DATABASE__POOL_SIZE: 4
       ACCESSO_DATABASE__USER: ${POSTGRES_USER}

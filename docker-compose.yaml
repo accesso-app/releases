@@ -166,7 +166,7 @@ services:
       ACCESSO_SERVER__HOST: "0.0.0.0"
       ACCESSO_SERVER__PORT: "9008"
       OPENTELEMETRY_ENDPOINT_URL: "http://otel-collector:4317"
-      RUST_LOG: "debug"
+      RUST_LOG: ${RUST_LOG}
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
 
   api-public:
@@ -199,7 +199,7 @@ services:
       ACCESSO_SERVER__PORT: "9009"
       OPENTELEMETRY_ENDPOINT_URL: "http://otel-collector:4317"
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
-      RUST_LOG: info
+      RUST_LOG: ${RUST_LOG}
 
   frontend:
     image: ghcr.io/accesso-app/frontend/main:latest

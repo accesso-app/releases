@@ -124,12 +124,26 @@ services:
     expose:
       - "5432"
 
+  migrations:
+    image: ghcr.io/accesso-app/backend/migrations:latest
+    depends_on:
+      - database
+    networks:
+      accesso:
+    environment:
+      ACCESSO_DATABASE__DATABASE: ${POSTGRES_DB}
+      ACCESSO_DATABASE__HOST: database
+      ACCESSO_DATABASE__PASSWORD: ${POSTGRES_PASSWORD}
+      ACCESSO_DATABASE__USER: ${POSTGRES_USER}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
+
   api-internal:
     image: ghcr.io/accesso-app/backend/api-internal:latest
     expose:
       - "9008"
     depends_on:
       - database
+      - migrations
     labels:
       traefik.enable: "true"
       traefik.http.routers.api-internal.rule: "Host(`${DOMAIN_NAME}`) && PathPrefix(`/api/internal`)"
@@ -163,6 +177,7 @@ services:
     depends_on:
       - database
       - api-internal
+      - migrations
     labels:
       traefik.enable: "true"
       traefik.http.routers.api-public.rule: "Host(`api.${DOMAIN_NAME}`) && PathPrefix(`/v0`)"

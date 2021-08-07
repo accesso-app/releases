@@ -60,14 +60,14 @@ jobs:
         env:
           RUST_LOG: ${{ github.event.inputs.rust_log }}
         run: |
-          export RUST_LOG="${{ env.RUST_LOG }}"
+          echo "RUST_LOG=${{ env.RUST_LOG }}" >> $GITHUB_ENV
 
       - name: Set RUST_LOG variable default
         if: ${{ !github.event.inputs.rust_log }}
         env:
           RUST_LOG: INFO
         run: |
-          export RUST_LOG="${{ env.RUST_LOG }}"
+          echo "RUST_LOG=${{ env.RUST_LOG }}" >> $GITHUB_ENV
 
       - name: Docker compose
         run: |
@@ -78,7 +78,7 @@ jobs:
           export POSTGRES_PASSWORD="${{ secrets.DEV_DB_PASSWORD }}"
           export SENDGRID_API_KEY="${{ secrets.DEV_SENDGRID_API_KEY }}"
           export DOMAIN_NAME="${{ env.DOMAIN_NAME }}"
-          export RUST_LOG="${{ env.INPUT_RUST_LOG }}"
+          export RUST_LOG="${{ env.RUST_LOG }}"
           docker-compose -f docker-compose.yaml -f dev.yaml pull
           docker-compose -f docker-compose.yaml -f dev.yaml build
           docker-compose -f docker-compose.yaml -f dev.yaml up -d --remove-orphans

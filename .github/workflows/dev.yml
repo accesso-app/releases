@@ -13,6 +13,14 @@ on:
     types:
       - deploy-dev
   workflow_dispatch:
+    inputs:
+      rust_log:
+        description: Set RUST_LOG env variable
+        required: false
+        default: 'INFO'
+
+env:
+  INPUT_RUST_LOG: ${{ github.event.inputs.rust_log }}
 
 jobs:
   deploy:
@@ -56,6 +64,7 @@ jobs:
           export POSTGRES_PASSWORD="${{ secrets.DEV_DB_PASSWORD }}"
           export SENDGRID_API_KEY="${{ secrets.DEV_SENDGRID_API_KEY }}"
           export DOMAIN_NAME="${{ env.DOMAIN_NAME }}"
+          export RUST_LOG="${{ env.INPUT_RUST_LOG }}"
           docker-compose -f docker-compose.yaml -f dev.yaml pull
           docker-compose -f docker-compose.yaml -f dev.yaml build
           docker-compose -f docker-compose.yaml -f dev.yaml up -d --remove-orphans

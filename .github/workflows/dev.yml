@@ -55,6 +55,20 @@ jobs:
           git fetch -p
           git checkout ${{ github.sha }}
 
+      - name: Set RUST_LOG variable from inputs
+        if: ${{ github.event.inputs.rust_log }}
+        env:
+          RUST_LOG: ${{ github.event.inputs.rust_log }}
+        run: |
+          export RUST_LOG="${{ env.RUST_LOG }}"
+
+      - name: Set RUST_LOG variable default
+        if: ${{ !github.event.inputs.rust_log }}
+        env:
+          RUST_LOG: INFO
+        run: |
+          export RUST_LOG="${{ env.RUST_LOG }}"
+
       - name: Docker compose
         run: |
           docker login --username ${{ secrets.DOCKER_HUB_LOGIN }} -p ${{ secrets.DOCKER_HUB_TOKEN }}

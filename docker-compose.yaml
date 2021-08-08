@@ -140,7 +140,7 @@ services:
   api-internal:
     image: ghcr.io/accesso-app/backend/api-internal:latest
     expose:
-      - "9008"
+      - "9010"
     depends_on:
       - database
       - migrations
@@ -164,7 +164,7 @@ services:
       ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
       ACCESSO_SENDGRID__ENABLED: "false"
       ACCESSO_SERVER__HOST: "0.0.0.0"
-      ACCESSO_SERVER__PORT: "9008"
+      ACCESSO_SERVER__PORT: "9010"
       OPENTELEMETRY_ENDPOINT_URL: "http://otel-collector:4317"
       RUST_LOG: ${RUST_LOG}
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
@@ -173,7 +173,7 @@ services:
     image: ghcr.io/accesso-app/backend/api-public:latest
     restart: "no"
     expose:
-      - "9009"
+      - "9015"
     depends_on:
       - database
       - api-internal
@@ -196,7 +196,7 @@ services:
       ACCESSO_SENDGRID__EMAIL_CONFIRM_TEMPLATE: d-eec45c55c0364140bf38172e021c8ea5
       ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
       ACCESSO_SERVER__HOST: "0.0.0.0"
-      ACCESSO_SERVER__PORT: "9009"
+      ACCESSO_SERVER__PORT: "9015"
       OPENTELEMETRY_ENDPOINT_URL: "http://otel-collector:4317"
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database/${POSTGRES_DB}
       RUST_LOG: ${RUST_LOG}
@@ -212,6 +212,6 @@ services:
     networks:
       accesso:
     environment:
-      PUBLIC_URL: https://accesso.local
-      IMAGE_URL: https://accesso.local/images
+      PUBLIC_URL: https://accesso.localhost
+      IMAGE_URL: https://accesso.localhost/images
       BACKEND_URL: https://accesso.localhost/api/internal

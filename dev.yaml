@@ -21,6 +21,7 @@ services:
     environment:
       ACCESSO_SENDGRID__APPLICATION_HOST: accesso.sova.dev
       ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
+      ACCESSO_SENDGRID__ENABLED: "true"
     labels:
       traefik.http.routers.traefik.tls.certresolver: "le"
 

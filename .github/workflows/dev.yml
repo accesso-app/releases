@@ -80,7 +80,7 @@ jobs:
           export DOMAIN_NAME="${{ env.DOMAIN_NAME }}"
           export RUST_LOG="${{ env.RUST_LOG }}"
           export BACKEND_URL="https://accesso.sova.dev/api/internal"
-          docker-compose -f docker-compose.yaml -f dev.yaml pull
+          docker-compose -f docker-compose.yaml -q -f dev.yaml pull
           docker-compose -f docker-compose.yaml -f dev.yaml build
           docker-compose -f docker-compose.yaml -f dev.yaml up -d --remove-orphans
 

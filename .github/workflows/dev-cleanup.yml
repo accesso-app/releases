@@ -16,4 +16,4 @@ jobs:
 
     steps:
       - name: Clean docker containers and volumes
-        run: docker system prune -a --volumes
+        run: docker system prune -a --volumes --force

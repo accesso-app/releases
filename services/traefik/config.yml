@@ -7,7 +7,7 @@ http:
     admin-auth:
       basicAuth:
         users:
-          - "sergeysova:$apr1$PNFX/M.h$X7ydmhE7OKi/.f5MBSuRC0"
+          - "sergeysova:$$apr1$$iVxfSeeY$$WzRdQ4lMvMMpi0acvIbmJ1"
     api-internal-stripprefix:
       stripPrefix:
         prefixes:

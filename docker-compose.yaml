@@ -249,8 +249,12 @@ services:
       - traefik
     labels:
       traefik.enable: "true"
-      traefik.http.routers.admin.tls: "true"
+      traefik.http.routers.admin.entrypoints: web
       traefik.http.routers.admin.rule: "Host(`admin.${DOMAIN_NAME}`)"
+      traefik.http.routers.admin-secure.entrypoints: websecure
+      traefik.http.routers.admin-secure.tls: "true"
+      traefik.http.routers.admin-secure.rule: "Host(`admin.${DOMAIN_NAME}`)"
+
     expose:
       - "80"
     networks:

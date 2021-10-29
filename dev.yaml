@@ -48,8 +48,8 @@ services:
     environment:
       PUBLIC_URL: https://admin.accesso.sova.dev
     labels:
-      traefik.http.routers.admin.tls.certresolver: "le"
-      traefik.http.routers.traefik-secure.middlewares: "admin-auth@file"
+      traefik.http.routers.admin-secure.tls.certresolver: "le"
+      traefik.http.routers.admin-secure.middlewares: "admin-auth@file"
 
   frontend:
     image: ghcr.io/accesso-app/frontend/main:latest

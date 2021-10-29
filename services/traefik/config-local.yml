@@ -8,6 +8,10 @@ http:
       stripPrefix:
         prefixes:
           - "/v0"
+    admin-auth:
+      basicAuth:
+        users:
+          - "sergeysova:$$apr1$$nJ2RVxl1$$lctgmatAl4DGCx2UZE7YD1"
     api-admin-stripprefix:
       stripPrefix:
         prefixes:

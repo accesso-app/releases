@@ -32,8 +32,8 @@ services:
       ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
       ACCESSO_SENDGRID__ENABLED: "true"
     labels:
-      traefik.http.routers.traefik.tls.certresolver: "le"
-      traefik.http.routers.traefik-secure.middlewares: "admin-auth@file"
+      traefik.http.routers.api-admin.tls.certresolver: "le"
+      traefik.http.routers.api-admin.middlewares: "admin-auth@file"
 
   api-public:
     image: ghcr.io/accesso-app/backend/api-public:latest

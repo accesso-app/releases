@@ -4,6 +4,10 @@ http:
       basicAuth:
         users:
           - "admin_accesso:$2y$10$vl60Pw4Rzl4RDv5tbawgEuj7A2chIc5FKE77EKsFLGtvZR/oxhdiO"
+    admin-auth:
+      basicAuth:
+        users:
+          - "sergeysova:$$apr1$$nJ2RVxl1$$lctgmatAl4DGCx2UZE7YD1"
     api-internal-stripprefix:
       stripPrefix:
         prefixes:
@@ -12,6 +16,10 @@ http:
       stripPrefix:
         prefixes:
           - "/v0"
+    api-admin-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/api"
     security-headers:
       headers:
         frameDeny: true

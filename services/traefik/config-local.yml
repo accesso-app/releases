@@ -8,6 +8,10 @@ http:
       stripPrefix:
         prefixes:
           - "/v0"
+    api-admin-stripprefix:
+      stripPrefix:
+        prefixes:
+          - "/api"
     security-headers:
       headers:
         frameDeny: true

@@ -25,6 +25,16 @@ services:
     labels:
       traefik.http.routers.traefik.tls.certresolver: "le"
 
+  api-admin:
+    image: ghcr.io/accesso-app/backend/api-admin:latest
+    environment:
+      ACCESSO_SENDGRID__APPLICATION_HOST: accesso.sova.dev
+      ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
+      ACCESSO_SENDGRID__ENABLED: "true"
+    labels:
+      traefik.http.routers.traefik.tls.certresolver: "le"
+      traefik.http.routers.traefik-secure.middlewares: "admin-auth@file"
+
   api-public:
     image: ghcr.io/accesso-app/backend/api-public:latest
     environment:
@@ -32,6 +42,14 @@ services:
       ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
     labels:
       traefik.http.routers.api-public.tls.certresolver: "le"
+
+  admin:
+    image: ghcr.io/accesso-app/admin/frontend:latest
+    environment:
+      PUBLIC_URL: https://admin.accesso.sova.dev
+    labels:
+      traefik.http.routers.admin.tls.certresolver: "le"
+      traefik.http.routers.traefik-secure.middlewares: "admin-auth@file"
 
   frontend:
     image: ghcr.io/accesso-app/frontend/main:latest

@@ -221,6 +221,7 @@ services:
       - migrations
     labels:
       traefik.enable: "true"
+      traefik.http.routers.api-admin.entrypoints: websecure
       traefik.http.routers.api-admin.rule: "Host(`admin.${DOMAIN_NAME}`) && PathPrefix(`/api`)"
       traefik.http.routers.api-admin.middlewares: "api-admin-stripprefix@file"
       traefik.http.routers.api-admin.tls: "true"

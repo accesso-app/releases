@@ -2,12 +2,21 @@ version: "3.7"
 
 # https://accesso.sova.dev
 
+volumes:
+  tls-storage:
+    driver: local
+    driver_opts:
+      type: none
+      device: "${PWD}/data/tls"
+      o: bind
+
 services:
   traefik:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./services/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
       - ./services/traefik/config.yml:/etc/traefik/config.yml:ro
+      - tls-storage:/tls
     labels:
       traefik.http.routers.traefik-secure.tls.certresolver: "le"
       traefik.http.routers.traefik-secure.middlewares: "dashboard-auth@file"

@@ -37,12 +37,6 @@ services:
     networks:
       accesso:
 
-  acme-permissions:
-    image: busybox:1.31.1
-    command: ["sh", "-c", "chmod 0600 /data/acme.json"]
-    volumes:
-      - ./tls/acme.json:/data/acme.json:rw
-
   traefik:
     hostname: traefik
     image: traefik:v2.4

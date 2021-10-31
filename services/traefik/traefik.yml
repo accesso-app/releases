@@ -37,7 +37,7 @@ entryPoints:
 certificatesResolvers:
   le:
     acme:
-      email: vetrokm@gmail.com
+      email: mail@sergeysova.com
       storage: /tls/acme.json
       tlsChallenge: true
       httpChallenge:

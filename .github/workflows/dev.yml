@@ -79,7 +79,7 @@ jobs:
           export SENDGRID_API_KEY="${{ secrets.DEV_SENDGRID_API_KEY }}"
           export DOMAIN_NAME="${{ env.DOMAIN_NAME }}"
           export RUST_LOG="${{ env.RUST_LOG }}"
-          export BACKEND_URL="https://accesso.sova.dev/api/internal"
+          export BACKEND_URL="https://auth.sova.dev/api/internal"
           docker-compose -f docker-compose.yaml -f dev.yaml pull -q
           docker-compose -f docker-compose.yaml -f dev.yaml build
           docker-compose -f docker-compose.yaml -f dev.yaml up -d --remove-orphans
@@ -89,7 +89,7 @@ jobs:
         if: success()
         with:
           token: '${{ github.token }}'
-          environment_url: https://accesso.sova.dev
+          environment_url: https://auth.sova.dev
           state: success
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 

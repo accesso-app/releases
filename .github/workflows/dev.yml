@@ -25,7 +25,7 @@ env:
 jobs:
   deploy:
     env:
-      DOMAIN_NAME: 'accesso.sova.dev'
+      DOMAIN_NAME: 'auth.sova.dev'
     name: Deploy
     runs-on: [self-hosted, dev]
 

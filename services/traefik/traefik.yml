@@ -39,7 +39,6 @@ certificatesResolvers:
     acme:
       email: mail@sergeysova.com
       storage: /tls/acme.json
-      tlsChallenge: true
       httpChallenge:
         entryPoint: web
 

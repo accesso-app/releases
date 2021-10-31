@@ -39,9 +39,7 @@ services:
 
   traefik:
     hostname: traefik
-    image: traefik:v2.4
-    depends_on:
-      - acme-permissions
+    image: traefik:v2.5
     labels:
       traefik.enable: "true"
       traefik.http.routers.traefik.entrypoints: web
@@ -82,7 +80,6 @@ services:
     volumes:
     - ./services/grafana/grafana-datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
     - grafana-storage:/var/lib/grafana
-
 
   tempo:
     image: grafana/tempo:latest
@@ -254,15 +251,6 @@ services:
       accesso:
     environment:
       PUBLIC_URL: https://admin.accesso.localhost
-   
-  whoami:
-    image: "traefik/whoami"
-    container_name: "whoami"
-    labels:
-      traefik.enable: "true"
-      traefik.http.routers.whoami-secure.entrypoints: websecure
-      traefik.http.routers.whoami-secure.rule: "Host(`whoami.${DOMAIN_NAME}`)"
-      traefik.http.routers.whoami-secure.tls: "true"
 
   frontend:
     image: ghcr.io/accesso-app/frontend/main:latest

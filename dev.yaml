@@ -19,8 +19,8 @@ services:
   api-internal:
     image: ghcr.io/accesso-app/backend/api-internal:latest
     environment:
-      ACCESSO_SENDGRID__APPLICATION_HOST: accesso.sova.dev
-      ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
+      ACCESSO_SENDGRID__APPLICATION_HOST: auth.sova.dev
+      ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@auth.sova.dev
       ACCESSO_SENDGRID__ENABLED: "true"
     labels:
       traefik.http.routers.traefik.tls.certresolver: "le"
@@ -28,8 +28,8 @@ services:
   api-admin:
     image: ghcr.io/accesso-app/backend/api-admin:latest
     environment:
-      ACCESSO_SENDGRID__APPLICATION_HOST: accesso.sova.dev
-      ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
+      ACCESSO_SENDGRID__APPLICATION_HOST: auth.sova.dev
+      ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@auth.sova.dev
       ACCESSO_SENDGRID__ENABLED: "true"
     labels:
       traefik.http.routers.api-admin.tls.certresolver: "le"
@@ -38,15 +38,15 @@ services:
   api-public:
     image: ghcr.io/accesso-app/backend/api-public:latest
     environment:
-      ACCESSO_SENDGRID__APPLICATION_HOST: accesso.sova.dev
-      ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.sova.dev
+      ACCESSO_SENDGRID__APPLICATION_HOST: auth.sova.dev
+      ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@auth.sova.dev
     labels:
       traefik.http.routers.api-public.tls.certresolver: "le"
 
   admin:
     image: ghcr.io/accesso-app/admin/frontend:latest
     environment:
-      PUBLIC_URL: https://admin.accesso.sova.dev
+      PUBLIC_URL: https://admin.auth.sova.dev
     labels:
       traefik.http.routers.admin-secure.tls.certresolver: "le"
       traefik.http.routers.admin-secure.middlewares: "admin-auth@file"
@@ -61,6 +61,6 @@ services:
     labels:
       traefik.http.routers.frontend.tls.certresolver: "le"
     environment:
-      PUBLIC_URL: https://accesso.sova.dev
-      IMAGE_URL: https://accesso.sova.dev/images
+      PUBLIC_URL: https://auth.sova.dev
+      IMAGE_URL: https://auth.sova.dev/images
       DEBUG: "true"

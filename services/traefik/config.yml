@@ -12,14 +12,17 @@ http:
       stripPrefix:
         prefixes:
           - "/api/internal"
+        forceSlash: false
     api-public-stripprefix:
       stripPrefix:
         prefixes:
           - "/v0"
+        forceSlash: false
     api-admin-stripprefix:
       stripPrefix:
         prefixes:
           - "/api"
+        forceSlash: false
     security-headers:
       headers:
         frameDeny: true

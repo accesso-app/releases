@@ -262,7 +262,7 @@ services:
     environment:
       PUBLIC_URL: https://admin.accesso.localhost
    
-   whoami:
+  whoami:
     image: "traefik/whoami"
     container_name: "whoami"
     labels:

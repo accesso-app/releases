@@ -12,7 +12,6 @@ http:
       stripPrefix:
         prefixes:
           - "/api/internal"
-        forceSlash: false
     api-public-stripprefix:
       stripPrefix:
         prefixes:
@@ -22,7 +21,6 @@ http:
       stripPrefix:
         prefixes:
           - "/api"
-        forceSlash: false
     security-headers:
       headers:
         frameDeny: true

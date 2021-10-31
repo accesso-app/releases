@@ -266,3 +266,4 @@ services:
       PUBLIC_URL: https://accesso.localhost
       IMAGE_URL: https://accesso.localhost/images
       BACKEND_URL: ${BACKEND_URL}
+      STATUSPAGE_ID: ${STATUSPAGE_ID}

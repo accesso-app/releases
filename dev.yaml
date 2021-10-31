@@ -51,6 +51,10 @@ services:
       traefik.http.routers.admin-secure.tls.certresolver: "le"
       traefik.http.routers.admin-secure.middlewares: "admin-auth@file"
       traefik.http.routers.admin.middlewares: "admin-auth@file"
+      
+  whoami:
+    labels:
+      traefik.http.routers.whoami-secure.tls.certresolver: "le"
 
   frontend:
     image: ghcr.io/accesso-app/frontend/main:latest

@@ -33,7 +33,7 @@ services:
       - /mnt/volume_nyc1_01/accesso/postgres:/var/lib/postgresql/data
 
   api-internal:
-    image: "docker.pkg.github.com/accesso-app/backend/api-internal:20201113-162419-508a39"
+    image: "docker.pkg.github.com/accesso-app/backend/api-internal:sha-da0450d"
     environment:
       # TODO: rename to ACCESSO_SENDGRID__APPLICATION_HOST
       SG_APPLICATION_HOST: accesso.app
@@ -41,7 +41,7 @@ services:
       SG_SENDER_EMAIL: no-reply@accesso.app
 
   api-public:
-    image: "docker.pkg.github.com/accesso-app/backend/api-public:20201113-162417-508a39"
+    image: "docker.pkg.github.com/accesso-app/backend/api-public:sha-da0450d"
     environment:
       # TODO: rename to ACCESSO_SENDGRID__APPLICATION_HOST
       SG_APPLICATION_HOST: accesso.app

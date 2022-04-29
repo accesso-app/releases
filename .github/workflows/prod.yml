@@ -43,7 +43,7 @@ jobs:
           export POSTGRES_USER="${{ secrets.PROD_DB_USER }}"
           export POSTGRES_PASSWORD="${{ secrets.PROD_DB_PASSWORD }}"
           export SENDGRID_API_KEY="${{ secrets.PROD_SENDGRID_API_KEY }}"
-          docker-compose -f docker-compose.yaml -f dev.yaml pull
+          docker-compose -f docker-compose.yaml -f dev.yaml pull -q
           docker-compose -f docker-compose.yaml -f dev.yaml build
           docker-compose -f docker-compose.yaml -f dev.yaml up -d --remove-orphans
 

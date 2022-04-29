@@ -57,7 +57,7 @@ services:
   facade:
     image: "docker.pkg.github.com/accesso-app/releases/facade:0.2.0"
     networks:
-      entry:
+      accesso:
         aliases:
           - accesso.app
     volumes:

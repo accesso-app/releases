@@ -14,7 +14,7 @@ on:
 jobs:
   deploy-production:
     name: Deploy
-    runs-on: [self-hosted, PRODUCTION]
+    runs-on: [self-hosted, production]
 
     defaults:
       run:

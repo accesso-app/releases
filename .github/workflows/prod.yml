@@ -1,4 +1,4 @@
-name: PRODUCTION CI
+name: PRODUCTION DEPLOY
 
 on:
   workflow_dispatch:
@@ -10,6 +10,13 @@ on:
         description: 'Enter "yes" if full stop required before update'
         default: 'no'
         required: false
+      rust_log:
+        description: Set RUST_LOG env variable
+        required: false
+        default: 'INFO'
+
+env:
+  INPUT_RUST_LOG: ${{ github.event.inputs.rust_log }}
 
 jobs:
   deploy-production:
@@ -35,7 +42,7 @@ jobs:
           state: in_progress
           deployment_id: ${{ steps.deployment.outputs.deployment_id }}
 
-      - name: Docker compose
+      - name: Stop previous environment
         if: github.event.inputs.full_stop == 'yes'
         run: |
           docker login docker.pkg.github.com --username ${{ github.actor }} -p ${{ secrets.GITHUB_TOKEN }}

@@ -32,6 +32,7 @@ volumes:
     driver_opts:
       type: none
       device: "/usr/local/var/accesso/tls"
+      o: bind
 
 services:
   database:

@@ -27,45 +27,71 @@ volumes:
       device: "/mnt/volume_nyc1_01/accesso/webroot"
       o: bind
 
+  tls-storage:
+    driver: local
+    driver_opts:
+      type: none
+      device: "/usr/local/var/accesso/tls"
+
 services:
   database:
     volumes:
       - /mnt/volume_nyc1_01/accesso/postgres:/var/lib/postgresql/data
 
+  traefik:
+    volumes:
+      - /var/run/docker:sock:/var/run/docker:sock:ro
+      - ./services/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./services/traefik/config.yml:/etc/traefik/config.yml:ro
+      - tls-storage:/tls
+    labels:
+      traefik.http.routers.traefik-secure.tls.certresolver: "le"
+      traefik.http.routers.traefik-secure.middlewares: "dashboard-auth@file"
+
+  grafana:
+    labels:
+      traefik.http.routers.grafana.tls.certresolver: "le"
+
   api-internal:
-    image: "docker.pkg.github.com/accesso-app/backend/api-internal:sha-da0450d"
+    image: "ghcr.io/accesso-app/backend/api-internal:latest"
     environment:
-      # TODO: rename to ACCESSO_SENDGRID__APPLICATION_HOST
-      SG_APPLICATION_HOST: accesso.app
-      # TODO: rename to ACCESSO_SENDGRID__SENDER_EMAIL
-      SG_SENDER_EMAIL: no-reply@accesso.app
+      ACCESSO_SENDGRID__APPLICATION_HOST: accesso.app
+      ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.app
+      ACCESSO_SENDGRID__ENABLED: "true"
+    labels:
+      traefik.http.routers.traefik.tls.certresolver: "le"
 
   api-public:
-    image: "docker.pkg.github.com/accesso-app/backend/api-public:sha-da0450d"
+    image: "ghcr.io/accesso-app/backend/api-public:latest"
     environment:
-      # TODO: rename to ACCESSO_SENDGRID__APPLICATION_HOST
-      SG_APPLICATION_HOST: accesso.app
-      # TODO: rename to ACCESSO_SENDGRID__SENDER_EMAIL
-      SG_SENDER_EMAIL: no-reply@accesso.app
+      ACCESSO_SENDGRID__APPLICATION_HOST: accesso.app
+      ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.app
+    labels:
+      traefik.http.routers.api-public.tls.certresolver: "le"
+
+  api-admin:
+    image: "ghcr.io/accesso-app/backend/api-admin:latest"
+    environment:
+      ACCESSO_SENDGRID__APPLICATION_HOST: accesso.app
+      ACCESSO_SENDGRID__SENDER_EMAIL: no-reply@accesso.app
+      ACCESSO_SENDGRID__ENABLED: "true"
+    labels:
+      traefik.http.routers.api-admin.tls.certresolver: "le"
+      traefik.http.routers.api-admin.middlewares: "api-admin-stripprefix@file, admin-auth@file"
 
   frontend:
-    image: "docker.pkg.github.com/accesso-app/frontend/main:0.2.1"
+    image: "ghcr.io/accesso-app/frontend/main:latest"
+    labels:
+      traefik.http.routers.frontend.tls.certresolver: "le"
     environment:
       PUBLIC_URL: https://accesso.app
       IMAGE_URL: https://accesso.app/images
 
-  facade:
-    image: "docker.pkg.github.com/accesso-app/releases/facade:0.2.0"
-    networks:
-      accesso:
-        aliases:
-          - accesso.app
-    volumes:
-      - /etc/letsencrypt/live/accesso.app/fullchain.pem:/var/lib/accesso/tls/accesso.crt:ro
-      - /etc/letsencrypt/live/accesso.app/privkey.pem:/var/lib/accesso/tls/accesso.pem:ro
-      - /usr/local/var/accesso/tls/dhparam.pem:/etc/ssl/certs/dhparam.pem:ro
-      - image-storage:/images
-      - facade-webroot:/webroot
+  admin:
+    image: "ghcr.io/accesso-app/admin/frontend:latest"
     environment:
-      SERVER_NAME: accesso.app
-      WEB_EXTRA: ''
+      PUBLIC_URL: https://admin.accesso.app
+    labels:
+      traefik.http.routers.admin-secure.tls.certresolver: "le"
+      traefik.http.routers.admin-secure.middlewares: "admin-auth@file"
+      traefik.http.routers.admin.middlewares: "admin-auth@file"

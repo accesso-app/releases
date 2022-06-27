@@ -17,6 +17,7 @@ on:
 
 env:
   INPUT_RUST_LOG: ${{ github.event.inputs.rust_log }}
+  DOMAIN_NAME: accesso.app
 
 jobs:
   deploy-production:
@@ -68,6 +69,7 @@ jobs:
           export POSTGRES_USER="${{ secrets.PROD_DB_USER }}"
           export POSTGRES_PASSWORD="${{ secrets.PROD_DB_PASSWORD }}"
           export SENDGRID_API_KEY="${{ secrets.PROD_SENDGRID_API_KEY }}"
+          export BACKEND_URL="https://accesso.app/api/internal"
           docker-compose -f docker-compose.yaml -f prod.yaml pull -q
           docker-compose -f docker-compose.yaml -f prod.yaml build
           docker-compose -f docker-compose.yaml -f prod.yaml up -d --remove-orphans

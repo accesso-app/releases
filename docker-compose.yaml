@@ -250,7 +250,7 @@ services:
     networks:
       accesso:
     environment:
-      PUBLIC_URL: https://admin.accesso.localhost
+      PUBLIC_URL: https://admin.accesso.local
 
   frontend:
     image: ghcr.io/accesso-app/frontend/main:latest
@@ -263,7 +263,7 @@ services:
     networks:
       accesso:
     environment:
-      PUBLIC_URL: https://accesso.localhost
-      IMAGE_URL: https://accesso.localhost/images
+      PUBLIC_URL: https://accesso.local
+      IMAGE_URL: https://accesso.local/images
       BACKEND_URL: ${BACKEND_URL}
       STATUSPAGE_ID: ${STATUSPAGE_ID}

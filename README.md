@@ -24,5 +24,5 @@ brew install nss # if you use Firefox
 Get latest mkcert release from ([mkcert releases](https://github.com/FiloSottile/mkcert/releases))
 
 Run `mkcert -install`
-Run `scripts/create-cert/sh`
+Run `./scripts/create-cert.sh`
 </details>
